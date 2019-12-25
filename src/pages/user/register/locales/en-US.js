@@ -2,7 +2,7 @@ export default {
   'userandregister.login.userName': 'userName',
   'userandregister.login.password': 'password',
   'userandregister.login.message-invalid-credentials':
-    'Invalid username or password（admin/ant.design）',
+    'Invalid username or password',
   'userandregister.login.message-invalid-verification-code': 'Invalid verification code',
   'userandregister.login.tab-login-credentials': 'Credentials',
   'userandregister.login.tab-login-mobile': 'Mobile number',

@@ -5,19 +5,23 @@ import Link from 'umi/link';
 import { connect } from 'dva';
 import LoginComponents from './components/Login';
 import styles from './style.less';
+
 const { Tab, UserName, Password, Mobile, Captcha, Submit } = LoginComponents;
 
 class Login extends Component {
   loginForm = undefined;
+
   state = {
     type: 'account',
     autoLogin: true,
   };
+
   changeAutoLogin = e => {
     this.setState({
       autoLogin: e.target.checked,
     });
   };
+
   handleSubmit = (err, values) => {
     const { type } = this.state;
 
@@ -29,11 +33,13 @@ class Login extends Component {
       });
     }
   };
+
   onTabChange = type => {
     this.setState({
       type,
     });
   };
+
   onGetCaptcha = () =>
     new Promise((resolve, reject) => {
       if (!this.loginForm) {
@@ -58,6 +64,7 @@ class Login extends Component {
         }
       });
     });
+    
   renderMessage = content => (
     <Alert
       style={{

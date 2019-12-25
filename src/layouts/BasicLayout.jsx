@@ -13,6 +13,7 @@ import Authorized from '@/utils/Authorized';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import { isAntDesignPro, getAuthorityFromRouter } from '@/utils/utils';
 import logo from '../assets/logo.svg';
+
 const noMatch = (
   <Result
     status="403"
@@ -37,24 +38,24 @@ const menuDataRender = menuList =>
 
 const defaultFooterDom = (
   <DefaultFooter
-    copyright="2019 蚂蚁金服体验技术部出品"
+    copyright="2020 SaberCon 个人网站出品"
     links={[
       {
-        key: 'Ant Design Pro',
-        title: 'Ant Design Pro',
-        href: 'https://pro.ant.design',
+        key: 'motto-web',
+        title: 'motto-web',
+        href: 'https://github.com/SaberCon/motto-web',
         blankTarget: true,
       },
       {
-        key: 'github',
+        key: 'SaberCon',
         title: <Icon type="github" />,
-        href: 'https://github.com/ant-design/ant-design-pro',
+        href: 'https://github.com/SaberCon',
         blankTarget: true,
       },
       {
-        key: 'Ant Design',
-        title: 'Ant Design',
-        href: 'https://ant.design',
+        key: 'motto',
+        title: 'motto',
+        href: 'https://github.com/SaberCon/motto',
         blankTarget: true,
       },
     ]}

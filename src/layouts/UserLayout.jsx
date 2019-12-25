@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet';
 import Link from 'umi/link';
 import React from 'react';
 import { connect } from 'dva';
+import { Icon } from 'antd';
 import { formatMessage } from 'umi-plugin-react/locale';
 import SelectLang from '@/components/SelectLang';
 import logo from '../assets/logo.svg';
@@ -44,14 +45,36 @@ const UserLayout = props => {
             <div className={styles.header}>
               <Link to="/">
                 <img alt="logo" className={styles.logo} src={logo} />
-                <span className={styles.title}>Ant Design</span>
+                <span className={styles.title}>Motto Log</span>
               </Link>
             </div>
-            <div className={styles.desc}>Ant Design 是西湖区最具影响力的 Web 设计规范</div>
+            <div className={styles.desc}>Motto Log 是一个可以记录和分享个人生活的网站</div>
           </div>
           {children}
         </div>
-        <DefaultFooter />
+        <DefaultFooter
+          copyright="2020 SaberCon 个人网站出品"
+          links={[
+            {
+              key: 'motto-web',
+              title: 'motto-web',
+              href: 'https://github.com/SaberCon/motto-web',
+              blankTarget: true,
+            },
+            {
+              key: 'SaberCon',
+              title: <Icon type="github" />,
+              href: 'https://github.com/SaberCon',
+              blankTarget: true,
+            },
+            {
+              key: 'motto',
+              title: 'motto',
+              href: 'https://github.com/SaberCon/motto',
+              blankTarget: true,
+            },
+          ]}
+        />
       </div>
     </>
   );

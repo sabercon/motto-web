@@ -5,6 +5,7 @@ import Link from 'umi/link';
 import { connect } from 'dva';
 import router from 'umi/router';
 import styles from './style.less';
+import { sendSmsCode } from '@/services/user';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -45,14 +46,14 @@ class Register extends Component {
 
   componentDidUpdate() {
     const { userAndregister, form } = this.props;
-    const account = form.getFieldValue('mail');
+    const username = form.getFieldValue('username');
 
-    if (userAndregister.status === 'ok') {
+    if (userAndregister.success) {
       message.success('注册成功！');
       router.push({
         pathname: '/user/register-result',
         state: {
-          account,
+          username,
         },
       });
     }
@@ -62,7 +63,10 @@ class Register extends Component {
     clearInterval(this.interval);
   }
 
-  onGetCaptcha = () => {
+  onSendSmsCode = () => {
+    const phone = this.props.form.getFieldValue('phone')
+    sendSmsCode(1, phone);
+
     let count = 59;
     this.setState({
       count,
@@ -362,7 +366,7 @@ class Register extends Component {
                   size="large"
                   disabled={!!count}
                   className={styles.getCaptcha}
-                  onClick={this.onGetCaptcha}
+                  onClick={this.onSendSmsCode}
                 >
                   {count
                     ? `${count} s`

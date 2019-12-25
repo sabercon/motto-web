@@ -1,6 +1,7 @@
 import { Icon } from 'antd';
 import React from 'react';
 import styles from './index.less';
+
 export default {
   UserName: {
     props: {
