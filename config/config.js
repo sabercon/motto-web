@@ -83,14 +83,14 @@ export default {
           component: './user/login',
         },
         {
-          name: 'registerResult',
-          path: '/user/registerresult',
-          component: './user/registerResult',
-        },
-        {
           name: 'register',
           path: '/user/register',
           component: './user/register',
+        },
+        {
+          name: 'registerResult',
+          path: '/user/registerResult',
+          component: './user/registerResult',
         },
       ],
     },

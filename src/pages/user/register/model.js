@@ -1,4 +1,4 @@
-import { register } from '@/services/user';
+import { register, sendSmsCode } from '@/services/user';
 
 const Model = {
   namespace: 'userAndregister',
@@ -14,6 +14,9 @@ const Model = {
         type: 'registerHandle',
         payload: response,
       });
+    },
+    *fetchCode({ payload }, { call }) {
+      yield call(sendSmsCode, payload);
     },
   },
   reducers: {

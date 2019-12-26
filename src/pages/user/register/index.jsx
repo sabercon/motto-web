@@ -5,7 +5,6 @@ import Link from 'umi/link';
 import { connect } from 'dva';
 import router from 'umi/router';
 import styles from './style.less';
-import { sendSmsCode } from '@/services/user';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -51,7 +50,7 @@ class Register extends Component {
     if (userAndregister.success) {
       message.success('注册成功！');
       router.push({
-        pathname: '/user/register-result',
+        pathname: '/user/registerResult',
         state: {
           username,
         },
@@ -63,10 +62,7 @@ class Register extends Component {
     clearInterval(this.interval);
   }
 
-  onSendSmsCode = () => {
-    const phone = this.props.form.getFieldValue('phone')
-    sendSmsCode(1, phone);
-
+  onFetchCode = () => {
     let count = 59;
     this.setState({
       count,
@@ -153,7 +149,11 @@ class Register extends Component {
         });
       }
 
-      if (value.length < 6) {
+      if (value.length < 6 || value.length > 20) {
+        this.setState({
+          help: '密码长度错误！',
+          visible: !!value,
+        });
         callback('error');
       } else {
         const { form } = this.props;
@@ -203,29 +203,18 @@ class Register extends Component {
         </h3>
         <Form onSubmit={this.handleSubmit}>
           <FormItem>
-            {getFieldDecorator('mail', {
+            {getFieldDecorator('username', {
               rules: [
                 {
                   required: true,
-                  message: formatMessage({
-                    id: 'userandregister.email.required',
-                  }),
+                  message: '请输入用户名！',
                 },
                 {
-                  type: 'email',
-                  message: formatMessage({
-                    id: 'userandregister.email.wrong-format',
-                  }),
+                  pattern: /^[A-Za-z0-9]{2,40}$/,
+                  message: '用户名格式错误！',
                 },
               ],
-            })(
-              <Input
-                size="large"
-                placeholder={formatMessage({
-                  id: 'userandregister.email.placeholder',
-                })}
-              />,
-            )}
+            })(<Input size="large" placeholder="用户名，2-40位字符，可为字母或数字" />)}
           </FormItem>
           <FormItem help={help}>
             <Popover
@@ -269,9 +258,7 @@ class Register extends Component {
                 <Input
                   size="large"
                   type="password"
-                  placeholder={formatMessage({
-                    id: 'userandregister.password.placeholder',
-                  })}
+                  placeholder="密码，6-20位字符，可为字母或数字"
                 />,
               )}
             </Popover>
@@ -312,7 +299,7 @@ class Register extends Component {
                 <Option value="86">+86</Option>
                 <Option value="87">+87</Option>
               </Select>
-              {getFieldDecorator('mobile', {
+              {getFieldDecorator('phone', {
                 rules: [
                   {
                     required: true,
@@ -343,7 +330,7 @@ class Register extends Component {
           <FormItem>
             <Row gutter={8}>
               <Col span={16}>
-                {getFieldDecorator('captcha', {
+                {getFieldDecorator('smsCode', {
                   rules: [
                     {
                       required: true,
@@ -366,7 +353,7 @@ class Register extends Component {
                   size="large"
                   disabled={!!count}
                   className={styles.getCaptcha}
-                  onClick={this.onSendSmsCode}
+                  onClick={this.onFetchCode}
                 >
                   {count
                     ? `${count} s`

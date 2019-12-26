@@ -8,24 +8,26 @@ const actions = (
   <div className={styles.actions}>
     <Link to="/user/login">
       <Button size="large" type="primary">
-        <FormattedMessage id="userandregisterresult.register-result.back-home" />
+        立即登录
       </Button>
     </Link>
   </div>
 );
 
-const RegisterResult = () => (
+const RegisterResult = ({ location }) => (
   <Result
     className={styles.registerResult}
     status="success"
     title={
       <div className={styles.title}>
-        <FormattedMessage id="userandregisterresult.register-result.msg" username={Location.state.username}/>
+        <FormattedMessage
+          id="userandregisterresult.register-result.msg"
+          values={{
+            username: location.state ? location.state.username : 'unknown user',
+          }}
+        />
       </div>
     }
-    // subTitle={formatMessage({
-    //   id: 'userandregisterresult.register-result.activation-email',
-    // })}
     extra={actions}
   />
 );

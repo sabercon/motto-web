@@ -1,14 +1,5 @@
 import request from '@/utils/request';
 
-export async function query() {
-  return request('/api/users');
-}
-export async function queryCurrent() {
-  return request('/api/currentUser');
-}
-export async function queryNotices() {
-  return request('/api/notices');
-}
 export async function register(params) {
   return request('/api/user/register', {
     method: 'POST',
@@ -30,7 +21,15 @@ export async function reset(params) {
 export async function logout() {
   return request('/api/user/logout');
 }
-export async function sendSmsCode(status, phone) {
+export async function sendSmsCode({ status, phone }) {
   return request(`/api/user/sms/${status}/${phone}`);
 }
-
+export async function query() {
+  return request('/api/users');
+}
+export async function queryCurrent() {
+  return request('/api/currentUser');
+}
+export async function queryNotices() {
+  return request('/api/notices');
+}
