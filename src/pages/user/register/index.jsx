@@ -43,40 +43,39 @@ class Register extends Component {
 
   interval = undefined;
 
-  componentDidUpdate() {
-    const { userAndregister, form } = this.props;
-    const username = form.getFieldValue('username');
-
-    if (userAndregister.success) {
-      message.success('注册成功！');
-      router.push({
-        pathname: '/user/registerResult',
-        state: {
-          username,
-        },
-      });
-    }
-  }
-
   componentWillUnmount() {
     clearInterval(this.interval);
   }
 
   onFetchCode = () => {
-    let count = 59;
-    this.setState({
-      count,
-    });
-    this.interval = window.setInterval(() => {
-      count -= 1;
-      this.setState({
-        count,
-      });
+    const { form } = this.props;
+    form.validateFields(['phone'], {}, (err, values) => {
+      if (!err) {
+        const { dispatch } = this.props;
+        dispatch({
+          type: 'login/fetchCode',
+          payload: {
+            status: 1, // register
+            phone: values.phone,
+          },
+        });
 
-      if (count === 0) {
-        clearInterval(this.interval);
+        let count = 59;
+        this.setState({
+          count,
+        });
+        this.interval = window.setInterval(() => {
+          count -= 1;
+          this.setState({
+            count,
+          });
+
+          if (count === 0) {
+            clearInterval(this.interval);
+          }
+        }, 1000);
       }
-    }, 1000);
+    });
   };
 
   getPasswordStatus = () => {
@@ -384,7 +383,6 @@ class Register extends Component {
   }
 }
 
-export default connect(({ userAndregister, loading }) => ({
-  userAndregister,
+export default connect(({ loading }) => ({
   submitting: loading.effects['userAndregister/submit'],
 }))(Form.create()(Register));

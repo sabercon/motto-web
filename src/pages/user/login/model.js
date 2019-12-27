@@ -1,8 +1,9 @@
 import { stringify } from 'querystring';
 import router from 'umi/router';
-import { login, sendSmsCode } from '@/services/user';
+import { login, logout, sendSmsCode } from '@/services/user';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
+import { notification } from 'antd';
 
 const Model = {
   namespace: 'login',
@@ -17,7 +18,7 @@ const Model = {
         payload: response,
       }); // Login successfully
 
-      if (response.status === 'ok') {
+      if (response.success) {
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         let { redirect } = params;
@@ -38,29 +39,42 @@ const Model = {
         }
 
         router.replace(redirect || '/');
+      } else {
+        notification.error({
+          message: `错误码 ${response.code}`,
+          description: response.msg,
+        });
       }
     },
 
-    *getCaptcha({ payload }, { call }) {
+    *fetchCode({ payload }, { call }) {
       yield call(sendSmsCode, payload);
     },
 
-    logout() {
-      const { redirect } = getPageQuery(); // Note: There may be security issues, please note
+    *logout(_, { call }) {
+      const response = yield call(logout);
+      if (response.success) {
+        const { redirect } = getPageQuery(); // Note: There may be security issues, please note
 
-      if (window.location.pathname !== '/user/login' && !redirect) {
-        router.replace({
-          pathname: '/user/login',
-          search: stringify({
-            redirect: window.location.href,
-          }),
+        if (window.location.pathname !== '/user/login' && !redirect) {
+          router.replace({
+            pathname: '/user/login',
+            search: stringify({
+              redirect: window.location.href,
+            }),
+          });
+        }
+      } else {
+        notification.error({
+          message: `错误码 ${response.code}`,
+          description: response.msg,
         });
       }
     },
   },
   reducers: {
     changeLoginStatus(state, { payload }) {
-      setAuthority(payload.currentAuthority);
+      setAuthority('user'); // 目前没有权限管理，先采用默认值
       return { ...state, status: payload.status, type: payload.type };
     },
   },

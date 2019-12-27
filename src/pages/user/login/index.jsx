@@ -23,13 +23,13 @@ class Login extends Component {
   };
 
   handleSubmit = (err, values) => {
-    const { type } = this.state;
+    const { type, autoLogin } = this.state;
 
     if (!err) {
       const { dispatch } = this.props;
       dispatch({
         type: 'login/login',
-        payload: { ...values, type },
+        payload: { ...values, type, remember: autoLogin },
       });
     }
   };
@@ -46,7 +46,7 @@ class Login extends Component {
         return;
       }
 
-      this.loginForm.validateFields(['mobile'], {}, async (err, values) => {
+      this.loginForm.validateFields(['phone'], {}, async (err, values) => {
         if (err) {
           reject(err);
         } else {
@@ -54,8 +54,11 @@ class Login extends Component {
 
           try {
             const success = await dispatch({
-              type: 'login/getCaptcha',
-              payload: values.mobile,
+              type: 'login/fetchCode',
+              payload: {
+                status: 2,// login
+                phone: values.phone,
+              },
             });
             resolve(!!success);
           } catch (error) {
@@ -64,7 +67,7 @@ class Login extends Component {
         }
       });
     });
-    
+
   renderMessage = content => (
     <Alert
       style={{
@@ -105,10 +108,8 @@ class Login extends Component {
                 }),
               )}
             <UserName
-              name="userName"
-              placeholder={`${formatMessage({
-                id: 'user-login.login.userName',
-              })}: admin or user`}
+              name="username"
+              placeholder="用户名"
               rules={[
                 {
                   required: true,
@@ -116,19 +117,25 @@ class Login extends Component {
                     id: 'user-login.userName.required',
                   }),
                 },
+                {
+                  pattern: /^[A-Za-z0-9]{2,40}$/,
+                  message: '用户名格式错误！',
+                },
               ]}
             />
             <Password
               name="password"
-              placeholder={`${formatMessage({
-                id: 'user-login.login.password',
-              })}: ant.design`}
+              placeholder="密码"
               rules={[
                 {
                   required: true,
                   message: formatMessage({
                     id: 'user-login.password.required',
                   }),
+                },
+                {
+                  pattern: /^[A-Za-z0-9]{6,20}$/,
+                  message: '密码格式错误！',
                 },
               ]}
               onPressEnter={e => {
@@ -155,7 +162,7 @@ class Login extends Component {
                 }),
               )}
             <Mobile
-              name="mobile"
+              name="phone"
               placeholder={formatMessage({
                 id: 'user-login.phone-number.placeholder',
               })}
@@ -175,11 +182,11 @@ class Login extends Component {
               ]}
             />
             <Captcha
-              name="captcha"
+              name="smsCode"
               placeholder={formatMessage({
                 id: 'user-login.verification-code.placeholder',
               })}
-              countDown={120}
+              countDown={59}
               onGetCaptcha={this.onGetCaptcha}
               getCaptchaButtonText={formatMessage({
                 id: 'user-login.form.get-captcha',

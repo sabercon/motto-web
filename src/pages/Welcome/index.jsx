@@ -2,7 +2,7 @@ import React from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { FormattedMessage } from 'umi-plugin-react/locale';
 import { Card, Typography, Alert } from 'antd';
-import styles from './Welcome.less';
+import styles from './style.less';
 
 const CodePreview = ({ children }) => (
   <pre className={styles.pre}>
@@ -16,7 +16,7 @@ export default () => (
   <PageHeaderWrapper>
     <Card>
       <Alert
-        message="umi ui 现已发布，点击右下角 umi 图标即可使用"
+        message="motto log 现已发布，有任何问题可联系作者"
         type="success"
         showIcon
         banner
@@ -26,14 +26,11 @@ export default () => (
         }}
       />
       <Typography.Text strong>
-        <a target="_blank" rel="noopener noreferrer" href="https://pro.ant.design/docs/block">
-          <FormattedMessage
-            id="app.welcome.link.block-list"
-            defaultMessage="基于 block 开发，快速构建标准页面"
-          />
+        <a target="_blank" rel="noopener noreferrer" href="https://github.com/SaberCon/motto">
+          本项目后端 github 地址
         </a>
       </Typography.Text>
-      <CodePreview> npm run ui</CodePreview>
+      <CodePreview> https://github.com/SaberCon/motto</CodePreview>
       <Typography.Text
         strong
         style={{
@@ -43,12 +40,12 @@ export default () => (
         <a
           target="_blank"
           rel="noopener noreferrer"
-          href="https://pro.ant.design/docs/available-script#npm-run-fetchblocks"
+          href="https://github.com/SaberCon/motto-web"
         >
-          <FormattedMessage id="app.welcome.link.fetch-blocks" defaultMessage="获取全部区块" />
+          本项目前端 github 地址
         </a>
       </Typography.Text>
-      <CodePreview> npm run fetch:blocks</CodePreview>
+      <CodePreview> https://github.com/SaberCon/motto-web</CodePreview>
     </Card>
     <p
       style={{
@@ -56,9 +53,9 @@ export default () => (
         marginTop: 24,
       }}
     >
-      Want to add more pages? Please refer to{' '}
-      <a href="https://pro.ant.design/docs/block-cn" target="_blank" rel="noopener noreferrer">
-        use block
+      This is the github address of the author{' '}
+      <a href=" https://github.com/SaberCon" target="_blank" rel="noopener noreferrer">
+        SaberCon
       </a>
       。
     </p>

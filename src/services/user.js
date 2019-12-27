@@ -4,22 +4,27 @@ export async function register(params) {
   return request('/api/user/register', {
     method: 'POST',
     data: params,
+    requestType: 'form'
   });
 }
 export async function login(params) {
   return request('/api/user/login', {
     method: 'POST',
     data: params,
+    requestType: 'form'
   });
 }
 export async function reset(params) {
   return request('/api/user/reset', {
     method: 'POST',
     data: params,
+    requestType: 'form'
   });
 }
 export async function logout() {
-  return request('/api/user/logout');
+  return request('/api/user/logout', {
+    method: 'POST',
+  });
 }
 export async function sendSmsCode({ status, phone }) {
   return request(`/api/user/sms/${status}/${phone}`);

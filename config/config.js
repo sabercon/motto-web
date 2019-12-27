@@ -114,13 +114,6 @@ export default {
               component: './Welcome',
             },
             {
-              path: '/admin',
-              name: 'admin',
-              icon: 'crown',
-              component: './Admin',
-              authority: ['admin'],
-            },
-            {
               component: './404',
             },
           ],
