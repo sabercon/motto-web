@@ -2,22 +2,22 @@ import router from 'umi/router';
 import { login } from '@/services/user';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
-import { notification } from 'antd';
 
 const Model = {
   namespace: 'login',
   state: {
     status: undefined,
+    type: undefined,
+    msg: undefined,
   },
   effects: {
-    *login({ payload }, { call, put }) {
+    *submit({ payload }, { call, put }) {
       const response = yield call(login, payload);
-      yield put({
-        type: 'changeLoginStatus',
-        payload: response,
-      }); // Login successfully
-
       if (response.success) {
+        yield put({
+          type: 'changeLoginStatus',
+          payload: {status: 'OK', type: payload.type},
+        });
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         let { redirect } = params;
@@ -39,9 +39,9 @@ const Model = {
 
         router.replace(redirect || '/');
       } else {
-        notification.error({
-          message: `错误码 ${response.code}`,
-          description: response.msg,
+        yield put({
+          type: 'changeLoginStatus',
+          payload: {status: 'error', type: payload.type, msg: response.msg},
         });
       }
     },
@@ -49,7 +49,7 @@ const Model = {
   reducers: {
     changeLoginStatus(state, { payload }) {
       setAuthority('user'); // 目前没有权限管理，先采用默认值
-      return { ...state, status: payload.status, type: payload.type };
+      return { ...state, ...payload };
     },
   },
 };
