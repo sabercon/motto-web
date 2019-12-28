@@ -1,19 +1,19 @@
-import { register } from '@/services/user';
+import { reset } from '@/services/user';
 import router from 'umi/router';
 import { notification } from 'antd';
 
 const Model = {
-  namespace: 'register',
+  namespace: 'reset',
   state: {},
   effects: {
     *submit({ payload }, { call }) {
-      const response = yield call(register, payload);
+      const response = yield call(reset, payload);
       if(response.success) {
         router.push({
           pathname: '/user/result',
           state: {
-            type: 'register',
-            user: payload.username,
+            type: 'reset',
+            user: payload.phone,
           },
         });
       } else {

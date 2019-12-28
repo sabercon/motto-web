@@ -88,9 +88,14 @@ export default {
           component: './user/register',
         },
         {
-          name: 'registerResult',
-          path: '/user/registerResult',
-          component: './user/registerResult',
+          name: 'reset',
+          path: '/user/reset',
+          component: './user/reset',
+        },
+        {
+          name: 'result',
+          path: '/user/result',
+          component: './user/result',
         },
       ],
     },
@@ -111,7 +116,7 @@ export default {
               path: '/welcome',
               name: 'welcome',
               icon: 'smile',
-              component: './Welcome',
+              component: './welcome',
             },
             {
               component: './404',

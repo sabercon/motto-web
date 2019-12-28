@@ -41,7 +41,7 @@ class Register extends Component {
         dispatch({
           type: 'user/fetchCode',
           payload: {
-            status: 1, // register
+            status: 3, // reset
             phone: values.phone,
           },
         });
@@ -90,7 +90,7 @@ class Register extends Component {
         if (!err) {
           const { prefix } = this.state;
           dispatch({
-            type: 'register/submit',
+            type: 'reset/submit',
             payload: { ...values, prefix },
           });
         }
@@ -177,22 +177,8 @@ class Register extends Component {
     const { count, prefix, help, visible } = this.state;
     return (
       <div className={styles.main}>
-        <h3>注册</h3>
+        <h3>重置密码</h3>
         <Form onSubmit={this.handleSubmit}>
-          <FormItem>
-            {getFieldDecorator('username', {
-              rules: [
-                {
-                  required: true,
-                  message: '请输入用户名！',
-                },
-                {
-                  pattern: /^[A-Za-z0-9]{2,40}$/,
-                  message: '用户名格式错误！',
-                },
-              ],
-            })(<Input size="large" placeholder="用户名，2-40位字符，可为字母或数字" />)}
-          </FormItem>
           <FormItem help={help}>
             <Popover
               getPopupContainer={node => {
@@ -235,7 +221,7 @@ class Register extends Component {
                 <Input
                   size="large"
                   type="password"
-                  placeholder="密码，6-20位字符，可为字母或数字"
+                  placeholder="新密码，6-20位字符，可为字母或数字"
                 />,
               )}
             </Popover>
@@ -320,7 +306,7 @@ class Register extends Component {
               type="primary"
               htmlType="submit"
             >
-              注册
+              重置密码
             </Button>
             <Link className={styles.login} to="/user/login">
               使用已有账号登录
@@ -333,5 +319,5 @@ class Register extends Component {
 }
 
 export default connect(({ loading }) => ({
-  submitting: loading.effects['register/submit'],
+  submitting: loading.effects['reset/submit'],
 }))(Form.create()(Register));

@@ -56,7 +56,7 @@ class Login extends Component {
             const success = await dispatch({
               type: 'login/fetchCode',
               payload: {
-                status: 2,// login
+                status: 2, // login
                 phone: values.phone,
               },
             });
@@ -208,14 +208,9 @@ class Login extends Component {
             <Checkbox checked={autoLogin} onChange={this.changeAutoLogin}>
               <FormattedMessage id="user-login.login.remember-me" />
             </Checkbox>
-            <a
-              style={{
-                float: 'right',
-              }}
-              href=""
-            >
-              <FormattedMessage id="user-login.login.forgot-password" />
-            </a>
+            <Link style={{ float: 'right' }} to="/user/reset">
+              忘记密码
+            </Link>
           </div>
           <Submit loading={submitting}>
             <FormattedMessage id="user-login.login.login" />
