@@ -1,7 +1,7 @@
 import router from 'umi/router';
 import { notification } from 'antd';
 import { stringify } from 'querystring';
-import { sendSmsCode, logout, queryCurrent, query as queryUsers } from '@/services/user';
+import { sendSmsCode, logout, getUser } from '@/services/user';
 import { getUserInfo } from '@/services/userInfo';
 
 const UserModel = {
@@ -14,9 +14,12 @@ const UserModel = {
       yield call(sendSmsCode, payload);
     },
 
-    *logout(_, { call }) {
+    *logout(_, { call, put }) {
       const response = yield call(logout);
       if (response.success) {
+        yield put({
+          type: 'saveCurrentUser',
+        });
         router.replace({
           pathname: '/user/login',
           search: stringify({
@@ -31,56 +34,20 @@ const UserModel = {
       }
     },
 
-    *getUserInfo(_, { call, put }) {
-      const response = yield call(getUserInfo);
-      if (response.success) {
+    *getUser(_, { call, put }) {
+      const basicResponse = yield call(getUser);
+      const detailResponse = yield call(getUserInfo);
+      if (basicResponse.success && detailResponse.success) {
         yield put({
           type: 'saveCurrentUser',
-          payload: response.data,
-        });
-      } else {
-        notification.error({
-          message: `错误码 ${response.code}`,
-          description: response.msg,
+          payload: {...basicResponse.data, ...detailResponse.data},
         });
       }
-    },
-    
-    *fetch(_, { call, put }) {
-      const response = yield call(queryUsers);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
-    },
-
-    *fetchCurrent(_, { call, put }) {
-      const response = yield call(queryCurrent);
-      yield put({
-        type: 'saveCurrentUser',
-        payload: response,
-      });
     },
   },
   reducers: {
     saveCurrentUser(state, action) {
-      return { ...state, currentUser: action.payload || {} };
-    },
-
-    changeNotifyCount(
-      state = {
-        currentUser: {},
-      },
-      action,
-    ) {
-      return {
-        ...state,
-        currentUser: {
-          ...state.currentUser,
-          notifyCount: action.payload.totalCount,
-          unreadCount: action.payload.unreadCount,
-        },
-      };
+      return {...state, currentUser: action.payload || {} };
     },
   },
 };

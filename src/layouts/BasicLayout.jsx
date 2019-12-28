@@ -104,7 +104,7 @@ const BasicLayout = props => {
   useEffect(() => {
     if (dispatch) {
       dispatch({
-        type: 'user/fetchCurrent',
+        type: 'user/getUser',
       });
     }
   }, []);

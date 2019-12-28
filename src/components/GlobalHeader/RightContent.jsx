@@ -22,17 +22,10 @@ const GlobalHeaderRight = props => {
         placeholder={formatMessage({
           id: 'component.globalHeader.search',
         })}
-        defaultValue="umi ui"
+        defaultValue="SaberCon"
         dataSource={[
-          formatMessage({
-            id: 'component.globalHeader.search.example1',
-          }),
-          formatMessage({
-            id: 'component.globalHeader.search.example2',
-          }),
-          formatMessage({
-            id: 'component.globalHeader.search.example3',
-          }),
+          "搜索项一",
+          "搜索项二",
         ]}
         onSearch={value => {
           console.log('input', value);
@@ -48,7 +41,7 @@ const GlobalHeaderRight = props => {
       >
         <a
           target="_blank"
-          href="https://pro.ant.design/docs/getting-started"
+          href="https://github.com/SaberCon/motto-web/blob/master/README.md"
           rel="noopener noreferrer"
           className={styles.action}
         >
