@@ -177,9 +177,7 @@ class Login extends Component {
           </Submit>
           <div className={styles.other}>
             其他登录方式
-            <Icon type="alipay-circle" className={styles.icon} theme="outlined" />
-            <Icon type="taobao-circle" className={styles.icon} theme="outlined" />
-            <Icon type="weibo-circle" className={styles.icon} theme="outlined" />
+            <Icon type="wechat" className={styles.icon} theme="outlined" />
             <Link className={styles.register} to="/user/register">
               注册账号
             </Link>

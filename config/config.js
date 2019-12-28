@@ -30,11 +30,11 @@ const plugins = [
       },
       pwa: pwa
         ? {
-          workboxPluginMode: 'InjectManifest',
-          workboxOptions: {
-            importWorkboxFrom: 'local',
-          },
-        }
+            workboxPluginMode: 'InjectManifest',
+            workboxOptions: {
+              importWorkboxFrom: 'local',
+            },
+          }
         : false, // default close dll, because issue https://github.com/ant-design/ant-design-pro/issues/4665
       // dll features https://webpack.js.org/plugins/dll-plugin/
       // dll: {
@@ -80,22 +80,22 @@ export default {
         {
           name: 'login',
           path: '/user/login',
-          component: './user/login',
+          component: './user/Login',
         },
         {
           name: 'register',
           path: '/user/register',
-          component: './user/register',
+          component: './user/Register',
         },
         {
           name: 'reset',
           path: '/user/reset',
-          component: './user/reset',
+          component: './user/Reset',
         },
         {
           name: 'result',
           path: '/user/result',
-          component: './user/result',
+          component: './user/Result',
         },
       ],
     },
@@ -113,10 +113,23 @@ export default {
               redirect: '/welcome',
             },
             {
-              path: '/welcome',
-              name: 'welcome',
+              name: '欢迎',
               icon: 'smile',
-              component: './welcome',
+              path: '/welcome',
+              component: './Welcome',
+            },
+            {
+              name: '个人页',
+              icon: 'user',
+              path: '/account',
+              routes: [
+                {
+                  name: '个人设置',
+                  icon: 'setting',
+                  path: '/account/settings',
+                  component: './account/Settings',
+                },
+              ],
             },
             {
               component: './404',
@@ -172,7 +185,8 @@ export default {
   },
   manifest: {
     basePath: '/',
-  }, // chainWebpack: webpackPlugin,
+  },
+  // chainWebpack: webpackPlugin,
   // proxy: {
   //   '/server/api/': {
   //     target: 'https://preview.pro.ant.design/',
