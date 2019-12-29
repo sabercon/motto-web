@@ -11,6 +11,7 @@ const Model = {
     province: [],
     city: [],
     isLoading: false,
+    currentStep: 'unbind',
   },
   effects: {
     *fetchProvince(_, { put }) {
@@ -52,10 +53,14 @@ const Model = {
       }
     },
 
-    *unbindPhone({ payload }, { call }) {
+    *unbindPhone({ payload }, { call, put }) {
       const response = yield call(unbindPhone, payload);
       if (response.success) {
         message.success('解绑手机成功！');
+        yield put({
+          type: 'changeCurrentStep',
+          payload: 'bind',
+        });
       } else {
         message.error(response.msg);
       }
@@ -67,6 +72,10 @@ const Model = {
         message.success('绑定手机成功！');
         yield put({
           type: 'user/getUser',
+        });
+        yield put({
+          type: 'changeCurrentStep',
+          payload: 'result',
         });
       } else {
         message.error(response.msg);
@@ -84,6 +93,10 @@ const Model = {
 
     changeLoading(state, action) {
       return { ...state, isLoading: action.payload };
+    },
+
+    changeCurrentStep(state, { payload }) {
+      return { ...state, currentStep: payload };
     },
   },
 };

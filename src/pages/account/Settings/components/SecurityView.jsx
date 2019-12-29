@@ -11,15 +11,23 @@ const encrypt = phone => {
 
 class SecurityView extends Component {
   state = {
-    type: '',
+    status: '',
   };
+
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'accountSettings/changeCurrentStep',
+      payload: 'unbind',
+    });
+  }
 
   getData = () => [
     {
       title: '账号密码',
       description: '需要手机号验证',
       actions: [
-        <a key="Modify" onClick={() => this.changeType('password')}>
+        <a key="Modify" onClick={() => this.changeStatus('password')}>
           修改
         </a>,
       ],
@@ -28,23 +36,30 @@ class SecurityView extends Component {
       title: '密保手机',
       description: `已绑定手机：${encrypt(this.props.phone)}`,
       actions: [
-        <a key="Modify" onClick={() => this.changeType('phone')}>
+        <a key="Modify" onClick={() => this.changeStatus('phone')}>
           修改
         </a>,
       ],
     },
   ];
 
-  changeType = type => {
-    this.setState({ type });
+  changeStatus = status => {
+    this.setState({ status });
   };
 
   render() {
     const data = this.getData();
-    const { type } = this.state;
-    return (
-      <Fragment>
-        {!type && (
+    const { status } = this.state;
+    let content;
+    switch (status) {
+      case 'password':
+        content = <PasswordChange/>;
+        break;
+      case 'phone':
+        content = <PhoneChange/>;
+        break;
+      default:
+        content = (
           <List
             itemLayout="horizontal"
             dataSource={data}
@@ -54,13 +69,11 @@ class SecurityView extends Component {
               </List.Item>
             )}
           />
-        )}
-        {type === 'password' && (
-          <PasswordChange/>
-        )}
-        {type === 'phone' && (
-          <PhoneChange/>
-        )}
+        );
+    }
+    return (
+      <Fragment>
+        {content}
       </Fragment>
     );
   }

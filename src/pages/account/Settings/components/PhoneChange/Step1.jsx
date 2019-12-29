@@ -3,9 +3,13 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 
 const FormItem = Form.Item;
-const { Password } = Input;
 
-class PasswordChange extends Component {
+const encrypt = phone => {
+  const reg = /^(\d{3})\d*(\d{4})$/;
+  return phone.replace(reg, '$1****$2');
+};
+
+class Step1 extends Component {
   state = {
     count: 0,
   };
@@ -21,7 +25,7 @@ class PasswordChange extends Component {
     dispatch({
       type: 'user/fetchCode',
       payload: {
-        status: 4, // updatePassword
+        status: 5, // unbindPhone
         phone,
       },
     });
@@ -52,7 +56,7 @@ class PasswordChange extends Component {
       (err, values) => {
         if (!err) {
           dispatch({
-            type: 'accountSettings/updatePassword',
+            type: 'accountSettings/unbindPhone',
             payload: { ...values },
           });
         }
@@ -60,50 +64,17 @@ class PasswordChange extends Component {
     );
   };
 
-  checkConfirm = (rule, value, callback) => {
-    const { form } = this.props;
-
-    if (value && value !== form.getFieldValue('password')) {
-      callback('两次输入的密码不匹配！');
-    } else {
-      callback();
-    }
-  };
-
   render() {
-    const { form, submitting } = this.props;
+    const { form, submitting, phone } = this.props;
     const { getFieldDecorator } = form;
     const { count } = this.state;
     return (
       <div>
-        <Form onSubmit={this.handleSubmit} style = {{marginTop: '30px', maxWidth: '360px'}}>
-          <FormItem>
-            {getFieldDecorator('password', {
-              rules: [
-                {
-                  required: true,
-                  message: '请输入密码！',
-                },
-                {
-                  pattern: /^[A-Za-z0-9]{6,20}$/,
-                  message: '密码格式错误！',
-                },
-              ],
-            })(<Password size="large" placeholder="密码" />)}
-          </FormItem>
-          <FormItem>
-            {getFieldDecorator('confirm', {
-              rules: [
-                {
-                  required: true,
-                  message: '两次输入的密码不匹配！',
-                },
-                {
-                  validator: this.checkConfirm,
-                },
-              ],
-            })(<Password size="large" placeholder="确认密码" />)}
-          </FormItem>
+        <Form
+          onSubmit={this.handleSubmit}
+          style={{ margin: '30px auto', maxWidth: '360px' }}
+        >
+          <Input size="large" value={encrypt(phone)} style={{ marginBottom: '24px' }} disabled />
           <FormItem>
             <Row gutter={8}>
               <Col span={16}>
@@ -117,7 +88,7 @@ class PasswordChange extends Component {
                 })(<Input size="large" placeholder="验证码" />)}
               </Col>
               <Col span={8}>
-              <Button
+                <Button
                   size="large"
                   disabled={!!count}
                   onClick={this.onFetchCode}
@@ -130,7 +101,7 @@ class PasswordChange extends Component {
           </FormItem>
           <FormItem>
             <Button size="large" loading={submitting} type="primary" htmlType="submit">
-              修改密码
+              解绑手机
             </Button>
           </FormItem>
         </Form>
@@ -141,5 +112,5 @@ class PasswordChange extends Component {
 
 export default connect(({ user, loading }) => ({
   phone: user.currentUser.phone,
-  submitting: loading.effects['accountSettings/updatePassword'],
-}))(Form.create()(PasswordChange));
+  submitting: loading.effects['accountSettings/unbindPhone'],
+}))(Form.create()(Step1));

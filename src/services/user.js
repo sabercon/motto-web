@@ -53,12 +53,3 @@ export async function sendSmsCode({ status, phone }) {
 export async function getUser() {
   return request('/api/user');
 }
-export async function query() {
-  return request('/api/users');
-}
-export async function queryCurrent() {
-  return request('/api/currentUser');
-}
-export async function queryNotices() {
-  return request('/api/notices');
-}
