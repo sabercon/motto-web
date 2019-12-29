@@ -1,9 +1,9 @@
 import { Button, Form, Input, Select, Upload, Radio, Icon, DatePicker } from 'antd';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'dva';
+import moment from 'moment';
 import GeographicView from './GeographicView';
 import styles from './BaseView.less';
-import moment from 'moment';
 
 const FormItem = Form.Item;
 const { Option } = Select; // 头像组件 方便以后独立，增加裁剪之类的功能
