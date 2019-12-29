@@ -1,3 +1,4 @@
+import router from 'umi/router';
 import { updatePassword, unbindPhone, bindPhone } from '@/services/user';
 import { update } from '@/services/userInfo';
 import { message } from 'antd';
@@ -38,6 +39,37 @@ const Model = {
         yield put({
           type: 'user/getUser',
         });
+      }
+    },
+
+    *updatePassword({ payload }, { call }) {
+      const response = yield call(updatePassword, payload);
+      if (response.success) {
+        message.success('修改密码成功，请重新登录');
+        router.push('/user/login');
+      } else {
+        message.error(response.msg);
+      }
+    },
+
+    *unbindPhone({ payload }, { call }) {
+      const response = yield call(unbindPhone, payload);
+      if (response.success) {
+        message.success('解绑手机成功！');
+      } else {
+        message.error(response.msg);
+      }
+    },
+
+    *bindPhone({ payload }, { call, put }) {
+      const response = yield call(bindPhone, payload);
+      if (response.success) {
+        message.success('绑定手机成功！');
+        yield put({
+          type: 'user/getUser',
+        });
+      } else {
+        message.error(response.msg);
       }
     },
   },

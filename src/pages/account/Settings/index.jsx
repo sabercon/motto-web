@@ -3,9 +3,9 @@ import { FormattedMessage } from 'umi-plugin-react/locale';
 import { GridContent } from '@ant-design/pro-layout';
 import { Menu } from 'antd';
 import { connect } from 'dva';
-import BaseView from './components/base';
-import BindingView from './components/binding';
-import SecurityView from './components/security';
+import BaseView from './components/BaseView';
+import BindingView from './components/BindingView';
+import SecurityView from './components/SecurityView';
 import styles from './style.less';
 
 const { Item } = Menu;

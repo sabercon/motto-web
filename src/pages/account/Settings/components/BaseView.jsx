@@ -6,8 +6,9 @@ import GeographicView from './GeographicView';
 import styles from './BaseView.less';
 
 const FormItem = Form.Item;
-const { Option } = Select; // 头像组件 方便以后独立，增加裁剪之类的功能
+const { Option } = Select; 
 
+// 头像组件 方便以后独立，增加裁剪之类的功能
 const AvatarView = ({ avatar }) => (
   <Fragment>
     <div className={styles.avatar_title}>头像</div>
@@ -24,18 +25,22 @@ const AvatarView = ({ avatar }) => (
 
 // TODO: 要修改后端数据结构
 const getAddress = values => {
-  let address = values.country ? values.country : '';
-  if (values.address) {
-    address += '-' + (values.address.province ? values.address.province.label : '');
-    address += '-' + (values.address.city ? values.address.city.label : '');
+  const { country, address } = values;
+  let formattedAddress = country || '';
+  if (address) {
+    const { province, city } = address;
+    formattedAddress += `-${province ? province.label : ''}`;
+    formattedAddress += `-${city ? city.label : ''}`;
   } else {
-    address += '--';
+    formattedAddress += '--';
   }
-  return address;
+  return formattedAddress;
 };
 
 class BaseView extends Component {
-  view = undefined;
+  state = {
+    avatar: '',
+  };
 
   componentDidMount() {
     this.setBaseInfo();
@@ -48,24 +53,15 @@ class BaseView extends Component {
       Object.keys(form.getFieldsValue()).forEach(key => {
         const obj = {};
         obj[key] = currentUser[key] || null;
-        if(key === 'birthday' && currentUser[key]) {
+        if (key === 'birthday' && currentUser[key]) {
           obj[key] = moment(currentUser[key]);
         }
         form.setFieldsValue(obj);
       });
+      this.setState({
+        avatar: currentUser.avatar || '',
+      });
     }
-  };
-
-  getAvatarURL() {
-    const { currentUser } = this.props;
-    if (currentUser && currentUser.avatar) {
-      return currentUser.avatar;
-    }
-    return '';
-  }
-
-  getViewDom = ref => {
-    this.view = ref;
   };
 
   handlerSubmit = event => {
@@ -90,7 +86,7 @@ class BaseView extends Component {
       form: { getFieldDecorator },
     } = this.props;
     return (
-      <div className={styles.baseView} ref={this.getViewDom}>
+      <div className={styles.baseView} >
         <div className={styles.left}>
           <Form layout="vertical" hideRequiredMark>
             <FormItem label="昵称">
@@ -120,7 +116,9 @@ class BaseView extends Component {
                 </Radio.Group>,
               )}
             </FormItem>
-            <FormItem label="出生日期">{getFieldDecorator('birthday')(<DatePicker format="YYYY-MM-DD"/>)}</FormItem>
+            <FormItem label="出生日期">
+              {getFieldDecorator('birthday')(<DatePicker format="YYYY-MM-DD" />)}
+            </FormItem>
             <FormItem label="国家/地区">
               {getFieldDecorator('country')(
                 <Select>
@@ -135,7 +133,7 @@ class BaseView extends Component {
           </Form>
         </div>
         <div className={styles.right}>
-          <AvatarView avatar={this.getAvatarURL()} />
+          <AvatarView avatar={this.state.avatar} />
         </div>
       </div>
     );
