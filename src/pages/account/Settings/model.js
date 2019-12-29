@@ -1,66 +1,47 @@
-import { queryCity, queryCurrent, queryProvince, query as queryUsers } from './service';
+import { updatePassword, unbindPhone, bindPhone } from '@/services/user';
+import { update } from '@/services/userInfo';
+import { message } from 'antd';
+import province from './geographic/province.json';
+import city from './geographic/city.json';
 
 const Model = {
-  namespace: 'accountAndSettings',
+  namespace: 'accountSettings',
   state: {
-    currentUser: {},
     province: [],
     city: [],
     isLoading: false,
   },
   effects: {
-    *fetch(_, { call, put }) {
-      const response = yield call(queryUsers);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
-    },
-
-    *fetchCurrent(_, { call, put }) {
-      const response = yield call(queryCurrent);
-      yield put({
-        type: 'saveCurrentUser',
-        payload: response,
-      });
-    },
-
-    *fetchProvince(_, { call, put }) {
+    *fetchProvince(_, { put }) {
       yield put({
         type: 'changeLoading',
         payload: true,
       });
-      const response = yield call(queryProvince);
       yield put({
         type: 'setProvince',
-        payload: response,
+        payload: province,
       });
     },
 
-    *fetchCity({ payload }, { call, put }) {
-      const response = yield call(queryCity, payload);
+    *fetchCity({ payload }, { put }) {
+      const cityOfProvince = city[payload];
       yield put({
         type: 'setCity',
-        payload: response,
+        payload: cityOfProvince,
       });
+    },
+
+    *update({ payload }, { call, put }) {
+      const response = yield call(update, payload);
+      if (response.success) {
+        message.success('更新成功！');
+        yield put({
+          type: 'user/getUser',
+        });
+      }
     },
   },
   reducers: {
-    saveCurrentUser(state, action) {
-      return { ...state, currentUser: action.payload || {} };
-    },
-
-    changeNotifyCount(state = {}, action) {
-      return {
-        ...state,
-        currentUser: {
-          ...state.currentUser,
-          notifyCount: action.payload.totalCount,
-          unreadCount: action.payload.unreadCount,
-        },
-      };
-    },
-
     setProvince(state, action) {
       return { ...state, province: action.payload };
     },
@@ -74,4 +55,5 @@ const Model = {
     },
   },
 };
+
 export default Model;

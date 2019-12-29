@@ -5,7 +5,6 @@ import { Menu } from 'antd';
 import { connect } from 'dva';
 import BaseView from './components/base';
 import BindingView from './components/binding';
-import NotificationView from './components/notification';
 import SecurityView from './components/security';
 import styles from './style.less';
 
@@ -32,12 +31,6 @@ class Settings extends Component {
           defaultMessage="Account Binding"
         />
       ),
-      notification: (
-        <FormattedMessage
-          id="accountandsettings.menuMap.notification"
-          defaultMessage="New Message Notification"
-        />
-      ),
     };
     this.state = {
       mode: 'inline',
@@ -47,10 +40,6 @@ class Settings extends Component {
   }
 
   componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'accountAndSettings/fetchCurrent',
-    });
     window.addEventListener('resize', this.resize);
     this.resize();
   }
@@ -115,9 +104,6 @@ class Settings extends Component {
       case 'binding':
         return <BindingView />;
 
-      case 'notification':
-        return <NotificationView />;
-
       default:
         break;
     }
@@ -128,7 +114,7 @@ class Settings extends Component {
   render() {
     const { currentUser } = this.props;
 
-    if (!currentUser.userid) {
+    if (!currentUser.username) {
       return '';
     }
 
@@ -158,6 +144,6 @@ class Settings extends Component {
   }
 }
 
-export default connect(({ accountAndSettings }) => ({
-  currentUser: accountAndSettings.currentUser,
+export default connect(({ user }) => ({
+  currentUser: user.currentUser,
 }))(Settings);
