@@ -1,8 +1,9 @@
-import { Button, Form, Input, Select, Upload } from 'antd';
+import { Button, Form, Input, Select, Upload, Radio, Icon, DatePicker } from 'antd';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'dva';
 import GeographicView from './GeographicView';
 import styles from './BaseView.less';
+import moment from 'moment';
 
 const FormItem = Form.Item;
 const { Option } = Select; // 头像组件 方便以后独立，增加裁剪之类的功能
@@ -21,14 +22,14 @@ const AvatarView = ({ avatar }) => (
   </Fragment>
 );
 
-
+// TODO: 要修改后端数据结构
 const getAddress = values => {
   let address = values.country ? values.country : '';
-  if(values.address) {
+  if (values.address) {
     address += '-' + (values.address.province ? values.address.province.label : '');
     address += '-' + (values.address.city ? values.address.city.label : '');
   } else {
-    address += '--'
+    address += '--';
   }
   return address;
 };
@@ -47,6 +48,9 @@ class BaseView extends Component {
       Object.keys(form.getFieldsValue()).forEach(key => {
         const obj = {};
         obj[key] = currentUser[key] || null;
+        if(key === 'birthday' && currentUser[key]) {
+          obj[key] = moment(currentUser[key]);
+        }
         form.setFieldsValue(obj);
       });
     }
@@ -69,12 +73,13 @@ class BaseView extends Component {
     const { form, dispatch } = this.props;
     form.validateFields((err, values) => {
       if (!err) {
-        const updateValues = { ...values };
-        // 对地址进行处理
-        updateValues.address = getAddress(values);
         dispatch({
           type: 'accountSettings/update',
-          payload: { ...updateValues },
+          payload: {
+            ...values,
+            address: getAddress(values),
+            birthday: values.birthday ? values.birthday.format('YYYY-MM-DD') : null,
+          },
         });
       }
     });
@@ -101,6 +106,21 @@ class BaseView extends Component {
             <FormItem label="个人简介">
               {getFieldDecorator('profile')(<Input.TextArea placeholder="个人简介" rows={4} />)}
             </FormItem>
+            <FormItem label="性别">
+              {getFieldDecorator('gender')(
+                <Radio.Group>
+                  <Radio value={1} className={styles.gender_radio}>
+                    <Icon type="man" style={{ color: 'blue', marginRight: '10px' }} />
+                    小哥哥
+                  </Radio>
+                  <Radio value={2} className={styles.gender_radio}>
+                    <Icon type="woman" style={{ color: 'deepPink', marginRight: '10px' }} />
+                    小姐姐
+                  </Radio>
+                </Radio.Group>,
+              )}
+            </FormItem>
+            <FormItem label="出生日期">{getFieldDecorator('birthday')(<DatePicker format="YYYY-MM-DD"/>)}</FormItem>
             <FormItem label="国家/地区">
               {getFieldDecorator('country')(
                 <Select>
