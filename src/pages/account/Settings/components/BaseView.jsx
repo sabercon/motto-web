@@ -1,4 +1,4 @@
-import { Button, Form, Input, Select, Upload, Radio, Icon, DatePicker } from 'antd';
+import { Button, Form, Input, Select, Upload, Radio, Icon, DatePicker, message } from 'antd';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
@@ -6,16 +6,23 @@ import GeographicView from './GeographicView';
 import styles from './BaseView.less';
 
 const FormItem = Form.Item;
-const { Option } = Select; 
+const { Option } = Select;
 
 // 头像组件 方便以后独立，增加裁剪之类的功能
-const AvatarView = ({ avatar }) => (
+const AvatarView = ({ avatar, onChange, fileList }) => (
   <Fragment>
     <div className={styles.avatar_title}>头像</div>
     <div className={styles.avatar}>
       <img src={avatar} alt="avatar" />
     </div>
-    <Upload fileList={[]}>
+    <Upload
+      fileList={fileList}
+      name="avatar"
+      action="/api/userInfo/avatar"
+      accept=".png,.jpg,.jpeg,.gif,.bmp"
+      onChange={onChange}
+      showUploadList={false}
+    >
       <div className={styles.button_view}>
         <Button icon="upload">更换头像</Button>
       </div>
@@ -40,6 +47,7 @@ const getAddress = values => {
 class BaseView extends Component {
   state = {
     avatar: '',
+    fileList: [],
   };
 
   componentDidMount() {
@@ -67,12 +75,14 @@ class BaseView extends Component {
   handlerSubmit = event => {
     event.preventDefault();
     const { form, dispatch } = this.props;
+    const { avatar } = this.state;
     form.validateFields((err, values) => {
       if (!err) {
         dispatch({
           type: 'accountSettings/update',
           payload: {
             ...values,
+            avatar,
             address: getAddress(values),
             birthday: values.birthday ? values.birthday.format('YYYY-MM-DD') : null,
           },
@@ -81,12 +91,28 @@ class BaseView extends Component {
     });
   };
 
+  uploadAvatar = ({ file, fileList }) => {
+    this.setState({
+      fileList: [...fileList],
+    });
+    if (file.status !== 'done') return;
+    if (file.response.success) {
+      this.setState({
+        avatar: file.response.data,
+      });
+      message.success('头像上传成功！');
+    } else {
+      message.error('头像上传失败！');
+    }
+  };
+
   render() {
     const {
       form: { getFieldDecorator },
     } = this.props;
+    const { avatar, fileList } = this.state;
     return (
-      <div className={styles.baseView} >
+      <div className={styles.baseView}>
         <div className={styles.left}>
           <Form layout="vertical" hideRequiredMark>
             <FormItem label="昵称">
@@ -133,7 +159,7 @@ class BaseView extends Component {
           </Form>
         </div>
         <div className={styles.right}>
-          <AvatarView avatar={this.state.avatar} />
+          <AvatarView avatar={avatar} onChange={this.uploadAvatar} fileList={fileList} />
         </div>
       </div>
     );
