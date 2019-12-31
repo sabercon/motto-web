@@ -1,7 +1,6 @@
 import { Icon, Tooltip } from 'antd';
 import React from 'react';
 import { connect } from 'dva';
-import { formatMessage } from 'umi-plugin-react/locale';
 import Avatar from './AvatarDropdown';
 import HeaderSearch from '../HeaderSearch';
 import SelectLang from '../SelectLang';
@@ -19,14 +18,9 @@ const GlobalHeaderRight = props => {
     <div className={className}>
       <HeaderSearch
         className={`${styles.action} ${styles.search}`}
-        placeholder={formatMessage({
-          id: 'component.globalHeader.search',
-        })}
+        placeholder="站内搜索"
         defaultValue="SaberCon"
-        dataSource={[
-          "搜索项一",
-          "搜索项二",
-        ]}
+        dataSource={['搜索项一', '搜索项二']}
         onSearch={value => {
           console.log('input', value);
         }}
@@ -34,11 +28,7 @@ const GlobalHeaderRight = props => {
           console.log('enter', value);
         }}
       />
-      <Tooltip
-        title={formatMessage({
-          id: 'component.globalHeader.help',
-        })}
-      >
+      <Tooltip title="使用文档">
         <a
           target="_blank"
           href="https://github.com/SaberCon/motto-web/blob/master/README.md"

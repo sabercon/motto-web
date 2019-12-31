@@ -4,7 +4,6 @@ import Link from 'umi/link';
 import React from 'react';
 import { connect } from 'dva';
 import { Icon } from 'antd';
-import { formatMessage } from 'umi-plugin-react/locale';
 import SelectLang from '@/components/SelectLang';
 import logo from '../assets/logo.svg';
 import styles from './UserLayout.less';
@@ -26,7 +25,6 @@ const UserLayout = props => {
   const title = getPageTitle({
     pathname: location.pathname,
     breadcrumb,
-    formatMessage,
     ...props,
   });
   return (

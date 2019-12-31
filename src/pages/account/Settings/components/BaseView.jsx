@@ -4,6 +4,8 @@ import { connect } from 'dva';
 import moment from 'moment';
 import GeographicView from './GeographicView';
 import styles from './BaseView.less';
+import provinces from '../geographic/province.json';
+import cities from '../geographic/city.json';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -30,20 +32,6 @@ const AvatarView = ({ avatar, onChange, fileList }) => (
   </Fragment>
 );
 
-// TODO: 要修改后端数据结构
-const getAddress = values => {
-  const { country, address } = values;
-  let formattedAddress = country || '';
-  if (address) {
-    const { province, city } = address;
-    formattedAddress += `-${province ? province.label : ''}`;
-    formattedAddress += `-${city ? city.label : ''}`;
-  } else {
-    formattedAddress += '--';
-  }
-  return formattedAddress;
-};
-
 class BaseView extends Component {
   state = {
     avatar: '',
@@ -58,14 +46,24 @@ class BaseView extends Component {
     const { currentUser, form } = this.props;
 
     if (currentUser) {
+      const obj = {};
       Object.keys(form.getFieldsValue()).forEach(key => {
-        const obj = {};
         obj[key] = currentUser[key] || null;
         if (key === 'birthday' && currentUser[key]) {
           obj[key] = moment(currentUser[key]);
         }
-        form.setFieldsValue(obj);
       });
+      // 根据省市获取地址
+      const currentProvince = provinces.find(e => e.name === currentUser.province) || {};
+      const province = { key: currentProvince.id, label: currentProvince.name };
+      const currentCity =
+        Object.values(cities)
+          .flat()
+          .find(e => e.name === currentUser.city) || {};
+      const city = { key: currentCity.id, label: currentCity.name };
+      obj.address = { province, city };
+
+      form.setFieldsValue(obj);
       this.setState({
         avatar: currentUser.avatar || '',
       });
@@ -78,12 +76,15 @@ class BaseView extends Component {
     const { avatar } = this.state;
     form.validateFields((err, values) => {
       if (!err) {
+        const { province, city } = values.address;
         dispatch({
           type: 'accountSettings/update',
           payload: {
             ...values,
             avatar,
-            address: getAddress(values),
+            province: province ? province.label : '',
+            city: city ? city.label : '',
+            address: '',
             birthday: values.birthday ? values.birthday.format('YYYY-MM-DD') : null,
           },
         });
@@ -109,6 +110,7 @@ class BaseView extends Component {
   render() {
     const {
       form: { getFieldDecorator },
+      loading,
     } = this.props;
     const { avatar, fileList } = this.state;
     return (
@@ -153,7 +155,7 @@ class BaseView extends Component {
               )}
             </FormItem>
             <FormItem label="所在省市">{getFieldDecorator('address')(<GeographicView />)}</FormItem>
-            <Button type="primary" onClick={this.handlerSubmit}>
+            <Button type="primary" onClick={this.handlerSubmit} loading={loading}>
               更新基本信息
             </Button>
           </Form>
@@ -166,6 +168,7 @@ class BaseView extends Component {
   }
 }
 
-export default connect(({ user }) => ({
+export default connect(({ user, loading }) => ({
   currentUser: user.currentUser,
+  loading: loading.models.accountSettings,
 }))(Form.create()(BaseView));

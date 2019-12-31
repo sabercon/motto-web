@@ -2,15 +2,14 @@ import router from 'umi/router';
 import { updatePassword, unbindPhone, bindPhone } from '@/services/user';
 import { update } from '@/services/userInfo';
 import { message } from 'antd';
-import province from './geographic/province.json';
-import city from './geographic/city.json';
+import provinces from './geographic/province.json';
+import cities from './geographic/city.json';
 
 const Model = {
   namespace: 'accountSettings',
   state: {
     province: [],
     city: [],
-    isLoading: false,
     currentStep: 'unbind',
   },
   effects: {
@@ -21,15 +20,15 @@ const Model = {
       });
       yield put({
         type: 'setProvince',
-        payload: province,
+        payload: provinces,
       });
     },
 
     *fetchCity({ payload }, { put }) {
-      const cityOfProvince = city[payload];
+      const city = cities[payload];
       yield put({
         type: 'setCity',
-        payload: cityOfProvince,
+        payload: city,
       });
     },
 
@@ -89,10 +88,6 @@ const Model = {
 
     setCity(state, action) {
       return { ...state, city: action.payload };
-    },
-
-    changeLoading(state, action) {
-      return { ...state, isLoading: action.payload };
     },
 
     changeCurrentStep(state, { payload }) {
