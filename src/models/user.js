@@ -21,12 +21,6 @@ const UserModel = {
           type: 'saveCurrentUser',
           payload: {},
         });
-        router.push({
-          pathname: '/user/login',
-          search: stringify({
-            redirect: window.location.href,
-          }),
-        });
       } else {
         message.error(response.msg);
       }

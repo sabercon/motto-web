@@ -19,9 +19,9 @@ const AvatarView = ({ avatar, onChange, fileList }) => (
     </div>
     <Upload
       fileList={fileList}
-      name="avatar"
-      action="/api/userInfo/avatar"
-      accept=".png,.jpg,.jpeg,.gif,.bmp"
+      name="img"
+      action="/api/oss/img"
+      accept=".bmp,.gif,.jpg,.jpeg,.png,.svg,.tiff,.webp"
       onChange={onChange}
       showUploadList={false}
     >
@@ -82,9 +82,9 @@ class BaseView extends Component {
           payload: {
             ...values,
             avatar,
-            province: province ? province.label : '',
-            city: city ? city.label : '',
-            address: '',
+            province: province ? province.label : null,
+            city: city ? city.label : null,
+            address: '', // 地址置空防止form上传对象报错
             birthday: values.birthday ? values.birthday.format('YYYY-MM-DD') : null,
           },
         });
@@ -125,7 +125,7 @@ class BaseView extends Component {
                     message: '昵称不能为空！',
                   },
                 ],
-              })(<Input placeholder="请输入用户昵称" />)}
+              })(<Input placeholder="请输入用户昵称！" />)}
             </FormItem>
             <FormItem label="个人简介">
               {getFieldDecorator('profile')(<Input.TextArea placeholder="个人简介" rows={4} />)}
@@ -141,7 +141,7 @@ class BaseView extends Component {
                     <Icon type="woman" style={{ color: 'deepPink', marginRight: '10px' }} />
                     小姐姐
                   </Radio>
-                </Radio.Group>,
+                </Radio.Group>
               )}
             </FormItem>
             <FormItem label="出生日期">
@@ -151,7 +151,7 @@ class BaseView extends Component {
               {getFieldDecorator('country')(
                 <Select>
                   <Option value="中国">中国</Option>
-                </Select>,
+                </Select>
               )}
             </FormItem>
             <FormItem label="所在省市">{getFieldDecorator('address')(<GeographicView />)}</FormItem>

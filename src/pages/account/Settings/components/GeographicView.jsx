@@ -148,6 +148,8 @@ export default connect(({ accountSettings, loading }) => {
   return {
     province,
     city,
-    loading: loading.models.accountSettings,
+    loading:
+      loading.effects['accountSettings/fetchProvince'] ||
+      loading.effects['accountSettings/fetchCity'],
   };
 })(GeographicView);
