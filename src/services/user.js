@@ -1,55 +1,61 @@
 import request from '@/utils/request';
 
+const baseUrl = '/api/user';
+
 export async function register(params) {
-  return request('/api/user/register', {
+  return request(`${baseUrl}/register`, {
     method: 'POST',
     data: params,
-    requestType: 'form'
+    requestType: 'form',
   });
 }
 export async function login(params) {
-  return request('/api/user/login', {
+  return request(`${baseUrl}/login`, {
     method: 'POST',
     data: params,
-    requestType: 'form'
+    requestType: 'form',
   });
 }
 export async function reset(params) {
-  return request('/api/user/reset', {
+  return request(`${baseUrl}/reset`, {
     method: 'POST',
     data: params,
-    requestType: 'form'
+    requestType: 'form',
   });
 }
 export async function logout() {
-  return request('/api/user/logout', {
+  return request(`${baseUrl}/logout`, {
     method: 'POST',
   });
 }
 export async function updatePassword(params) {
-  return request('/api/user/password', {
+  return request(`${baseUrl}/password`, {
     method: 'POST',
     data: params,
-    requestType: 'form'
+    requestType: 'form',
   });
 }
 export async function unbindPhone(params) {
-  return request('/api/user/unbind', {
+  return request(`${baseUrl}/unbind`, {
     method: 'POST',
     data: params,
-    requestType: 'form'
+    requestType: 'form',
   });
 }
 export async function bindPhone(params) {
-  return request('/api/user/bind', {
+  return request(`${baseUrl}/bind`, {
     method: 'POST',
     data: params,
-    requestType: 'form'
+    requestType: 'form',
   });
 }
-export async function sendSmsCode({ status, phone }) {
-  return request(`/api/user/sms/${status}/${phone}`);
+export async function get() {
+  return request(baseUrl);
 }
-export async function getUser() {
-  return request('/api/user');
+export async function update(params) {
+  return request(baseUrl, {
+    method: 'PUT',
+    data: params,
+    requestType: 'form',
+  });
 }
