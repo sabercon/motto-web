@@ -1,8 +1,8 @@
 import router from 'umi/router';
-import { notification } from 'antd';
+import { message } from 'antd';
 import { stringify } from 'querystring';
-import { sendSmsCode, logout, getUser } from '@/services/user';
-import { getUserInfo } from '@/services/userInfo';
+import { logout, get } from '@/services/user';
+import { sendCode } from '@/services/sms';
 
 const UserModel = {
   namespace: 'user',
@@ -10,8 +10,8 @@ const UserModel = {
     currentUser: {},
   },
   effects: {
-    *fetchCode({ payload }, { call }) {
-      yield call(sendSmsCode, payload);
+    *sendCode({ payload }, { call }) {
+      yield call(sendCode, payload);
     },
 
     *logout(_, { call, put }) {
@@ -19,35 +19,32 @@ const UserModel = {
       if (response.success) {
         yield put({
           type: 'saveCurrentUser',
+          payload: {},
         });
-        router.replace({
+        router.push({
           pathname: '/user/login',
           search: stringify({
             redirect: window.location.href,
           }),
         });
       } else {
-        notification.error({
-          message: `错误码 ${response.code}`,
-          description: response.msg,
-        });
+        message.error(response.msg);
       }
     },
 
     *getUser(_, { call, put }) {
-      const basicResponse = yield call(getUser);
-      const detailResponse = yield call(getUserInfo);
-      if (basicResponse.success && detailResponse.success) {
+      const response = yield call(get);
+      if (response.success) {
         yield put({
           type: 'saveCurrentUser',
-          payload: {...basicResponse.data, ...detailResponse.data},
+          payload: response.data,
         });
       }
     },
   },
   reducers: {
     saveCurrentUser(state, action) {
-      return {...state, currentUser: action.payload || {} };
+      return {...state, currentUser: action.payload };
     },
   },
 };

@@ -1,7 +1,7 @@
 import { Icon, Tooltip } from 'antd';
 import React from 'react';
 import { connect } from 'dva';
-import Avatar from './AvatarDropdown';
+import AvatarDropdown from './AvatarDropdown';
 import HeaderSearch from '../HeaderSearch';
 import SelectLang from '../SelectLang';
 import styles from './index.less';
@@ -38,7 +38,7 @@ const GlobalHeaderRight = props => {
           <Icon type="question-circle-o" />
         </a>
       </Tooltip>
-      <Avatar />
+      <AvatarDropdown />
       <SelectLang className={styles.action} />
     </div>
   );
