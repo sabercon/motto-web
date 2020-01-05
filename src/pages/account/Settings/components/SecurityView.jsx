@@ -53,10 +53,10 @@ class SecurityView extends Component {
     let content;
     switch (status) {
       case 'password':
-        content = <PasswordChange/>;
+        content = <PasswordChange />;
         break;
       case 'phone':
-        content = <PhoneChange/>;
+        content = <PhoneChange />;
         break;
       default:
         content = (

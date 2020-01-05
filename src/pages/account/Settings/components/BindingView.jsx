@@ -1,4 +1,4 @@
-import { Icon, List } from 'antd';
+import { Icon, List, message } from 'antd';
 import React, { Component, Fragment } from 'react';
 
 class BindingView extends Component {
@@ -6,7 +6,7 @@ class BindingView extends Component {
     {
       title: '绑定微信',
       description: '当前账号未绑定微信',
-      actions: [<a key="Bind">绑定</a>],
+      actions: [<a key="Bind" onClick={() => message.info("功能还在开发中。。。")}>绑定</a>],
       avatar: <Icon type="wechat" style={{ color: '#04BE02', fontSize: '48px' }} />,
     },
   ];

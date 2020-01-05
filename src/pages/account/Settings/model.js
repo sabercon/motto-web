@@ -14,10 +14,6 @@ const Model = {
   effects: {
     *fetchProvince(_, { put }) {
       yield put({
-        type: 'changeLoading',
-        payload: true,
-      });
-      yield put({
         type: 'setProvince',
         payload: provinces,
       });
@@ -38,6 +34,8 @@ const Model = {
         yield put({
           type: 'user/getUser',
         });
+      } else {
+        message.error(response.msg);
       }
     },
 

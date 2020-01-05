@@ -20,10 +20,10 @@ class Step1 extends Component {
     clearInterval(this.interval);
   }
 
-  onFetchCode = () => {
+  onSendCode = () => {
     const { phone, dispatch } = this.props;
     dispatch({
-      type: 'user/fetchCode',
+      type: 'user/sendCode',
       payload: {
         status: 5, // unbindPhone
         phone,
@@ -91,7 +91,7 @@ class Step1 extends Component {
                 <Button
                   size="large"
                   disabled={!!count}
-                  onClick={this.onFetchCode}
+                  onClick={this.onSendCode}
                   style={{ display: 'block', width: '100%' }}
                 >
                   {count ? `${count} s` : '获取验证码'}

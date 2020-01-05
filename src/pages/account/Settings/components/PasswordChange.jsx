@@ -16,10 +16,10 @@ class PasswordChange extends Component {
     clearInterval(this.interval);
   }
 
-  onFetchCode = () => {
+  onSendCode = () => {
     const { phone, dispatch } = this.props;
     dispatch({
-      type: 'user/fetchCode',
+      type: 'user/sendCode',
       payload: {
         status: 4, // updatePassword
         phone,
@@ -60,6 +60,14 @@ class PasswordChange extends Component {
     );
   };
 
+  checkPassword = (rule, value, callback) => {
+    const { form } = this.props;
+    form.validateFields(['confirm'], {
+      force: true,
+    });
+    callback();
+  };
+
   checkConfirm = (rule, value, callback) => {
     const { form } = this.props;
 
@@ -82,21 +90,24 @@ class PasswordChange extends Component {
               rules: [
                 {
                   required: true,
-                  message: '请输入密码！',
+                  message: '请输入新密码！',
                 },
                 {
                   pattern: /^[A-Za-z0-9]{6,20}$/,
                   message: '密码格式错误！',
                 },
+                {
+                  validator: this.checkPassword,
+                },
               ],
-            })(<Password size="large" placeholder="密码" />)}
+            })(<Password size="large" placeholder="新密码" />)}
           </FormItem>
           <FormItem>
             {getFieldDecorator('confirm', {
               rules: [
                 {
                   required: true,
-                  message: '两次输入的密码不匹配！',
+                  message: '请输入确认密码！',
                 },
                 {
                   validator: this.checkConfirm,
@@ -120,7 +131,7 @@ class PasswordChange extends Component {
               <Button
                   size="large"
                   disabled={!!count}
-                  onClick={this.onFetchCode}
+                  onClick={this.onSendCode}
                   style={{ display: 'block', width: '100%' }}
                 >
                   {count ? `${count} s` : '获取验证码'}

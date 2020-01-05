@@ -18,13 +18,13 @@ class Step2 extends Component {
     clearInterval(this.interval);
   }
 
-  onFetchCode = () => {
+  onSendCode = () => {
     const { form } = this.props;
     form.validateFields(['phone'], {}, (err, values) => {
       if (!err) {
         const { dispatch } = this.props;
         dispatch({
-          type: 'user/fetchCode',
+          type: 'user/sendCode',
           payload: {
             status: 6, // bindPhone
             phone: values.phone,
@@ -52,6 +52,7 @@ class Step2 extends Component {
   handleSubmit = e => {
     e.preventDefault();
     const { form, dispatch } = this.props;
+    const { prefix } =this.state;
     form.validateFields(
       {
         force: true,
@@ -60,7 +61,7 @@ class Step2 extends Component {
         if (!err) {
           dispatch({
             type: 'accountSettings/bindPhone',
-            payload: { ...values },
+            payload: { ...values, prefix },
           });
         }
       },
@@ -142,7 +143,7 @@ class Step2 extends Component {
                 <Button
                   size="large"
                   disabled={!!count}
-                  onClick={this.onFetchCode}
+                  onClick={this.onSendCode}
                   style={{ display: 'block', width: '100%' }}
                 >
                   {count ? `${count} s` : '获取验证码'}
