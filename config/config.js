@@ -119,7 +119,7 @@ export default {
               component: './Welcome',
             },
             {
-              name: '个人页',
+              name: '个人中心',
               icon: 'user',
               path: '/account',
               routes: [

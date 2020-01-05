@@ -1,6 +1,6 @@
 import { reset } from '@/services/user';
 import router from 'umi/router';
-import { notification } from 'antd';
+import { message } from 'antd';
 
 const Model = {
   namespace: 'reset',
