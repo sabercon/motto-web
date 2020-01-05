@@ -18,6 +18,7 @@ const passwordProgressMap = {
   pass: 'normal',
   poor: 'exception',
 };
+const passwordPattern = /^[A-Za-z0-9]{6,20}$/;
 
 class Reset extends Component {
   state = {
@@ -108,12 +109,11 @@ class Reset extends Component {
   };
 
   checkPassword = (rule, value, callback) => {
-    const pattern = /^[A-Za-z0-9]{6,20}$/;
     this.setState({ visible: true });
     if (!value) {
       this.setState({ visible: false });
       callback('请输入密码！');
-    } else if (!pattern.test(value)) {
+    } else if (!passwordPattern.test(value)) {
       this.setState({ visible: false });
       callback('密码格式错误！');
     }

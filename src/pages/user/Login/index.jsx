@@ -53,7 +53,7 @@ class Login extends Component {
 
           try {
             const success = await dispatch({
-              type: 'user/fetchCode',
+              type: 'user/sendCode',
               payload: {
                 status: 2, // login
                 phone: values.phone,
@@ -79,8 +79,8 @@ class Login extends Component {
   );
 
   render() {
-    const { userLogin = {}, submitting } = this.props;
-    const { status, type: loginType, msg } = userLogin;
+    const { login = {}, submitting } = this.props;
+    const { status, type: loginType, msg } = login;
     const { type, autoLogin } = this.state;
     return (
       <div className={styles.main}>
@@ -189,6 +189,6 @@ class Login extends Component {
 }
 
 export default connect(({ login, loading }) => ({
-  userLogin: login,
+  login,
   submitting: loading.effects['login/login'],
 }))(Login);

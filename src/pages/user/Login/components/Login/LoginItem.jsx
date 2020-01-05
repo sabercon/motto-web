@@ -6,6 +6,7 @@ import LoginContext from './LoginContext';
 import styles from './index.less';
 
 const FormItem = Form.Item;
+const { Password } = Input;
 
 class WrapFormItem extends Component {
   static defaultProps = {
@@ -64,7 +65,7 @@ class WrapFormItem extends Component {
 
     return options;
   };
-  
+
   runGetCaptchaCountDown = () => {
     const { countDown } = this.props;
     let count = countDown || 59;
@@ -137,6 +138,13 @@ class WrapFormItem extends Component {
       );
     }
 
+    if (type === 'Password') {
+      return (
+        <FormItem>
+          {getFieldDecorator(name, options)(<Password {...customProps} {...otherProps} />)}
+        </FormItem>
+      );
+    }
     return (
       <FormItem>
         {getFieldDecorator(name, options)(<Input {...customProps} {...otherProps} />)}
