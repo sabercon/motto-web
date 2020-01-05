@@ -7,9 +7,10 @@ import styles from './style.less';
 const FormItem = Form.Item;
 const { Option } = Select;
 const InputGroup = Input.Group;
+const { Password } = Input;
 const passwordStatusMap = {
-  ok: <div className={styles.success}>强度：强</div>,
-  pass: <div className={styles.warning}>强度：中</div>,
+  ok: <div className={styles.success}>强度：安全</div>,
+  pass: <div className={styles.warning}>强度：中等</div>,
   poor: <div className={styles.error}>强度：太短</div>,
 };
 const passwordProgressMap = {
@@ -21,9 +22,7 @@ const passwordProgressMap = {
 class Register extends Component {
   state = {
     count: 0,
-    confirmDirty: false,
     visible: false,
-    help: '',
     prefix: '86',
   };
 
@@ -33,13 +32,13 @@ class Register extends Component {
     clearInterval(this.interval);
   }
 
-  onFetchCode = () => {
+  onSendCode = () => {
     const { form } = this.props;
     form.validateFields(['phone'], {}, (err, values) => {
       if (!err) {
         const { dispatch } = this.props;
         dispatch({
-          type: 'user/fetchCode',
+          type: 'user/sendCode',
           payload: {
             status: 1, // register
             phone: values.phone,
@@ -109,56 +108,27 @@ class Register extends Component {
   };
 
   checkPassword = (rule, value, callback) => {
-    const { visible, confirmDirty } = this.state;
-
+    const pattern = /^[A-Za-z0-9]{6,20}$/;
+    this.setState({ visible: true });
     if (!value) {
-      this.setState({
-        help: '请输入密码！',
-        visible: !!value,
-      });
-      callback('error');
-    } else {
-      this.setState({
-        help: '',
-      });
-
-      if (!visible) {
-        this.setState({
-          visible: !!value,
-        });
-      }
-
-      if (value.length < 6 || value.length > 20) {
-        this.setState({
-          help: '密码长度错误！',
-          visible: !!value,
-        });
-        callback('error');
-      } else {
-        const { form } = this.props;
-
-        if (value && confirmDirty) {
-          form.validateFields(['confirm'], {
-            force: true,
-          });
-        }
-
-        callback();
-      }
+      this.setState({ visible: false });
+      callback('请输入密码！');
+    } else if (!pattern.test(value)) {
+      this.setState({ visible: false });
+      callback('密码格式错误！');
     }
-  };
-
-  changePrefix = value => {
-    this.setState({
-      prefix: value,
+    const { form } = this.props;
+    form.validateFields(['confirm'], {
+      force: true,
     });
+    callback();
   };
 
   renderPasswordProgress = () => {
     const { form } = this.props;
     const value = form.getFieldValue('password');
     const passwordStatus = this.getPasswordStatus();
-    return value && value.length ? (
+    return value ? (
       <div className={styles[`progress-${passwordStatus}`]}>
         <Progress
           status={passwordProgressMap[passwordStatus]}
@@ -174,7 +144,7 @@ class Register extends Component {
   render() {
     const { form, submitting } = this.props;
     const { getFieldDecorator } = form;
-    const { count, prefix, help, visible } = this.state;
+    const { count, prefix, visible } = this.state;
     return (
       <div className={styles.main}>
         <h3>注册</h3>
@@ -193,7 +163,7 @@ class Register extends Component {
               ],
             })(<Input size="large" placeholder="用户名，2-40位字符，可为字母或数字" />)}
           </FormItem>
-          <FormItem help={help}>
+          <FormItem>
             <Popover
               getPopupContainer={node => {
                 if (node && node.parentNode) {
@@ -215,7 +185,7 @@ class Register extends Component {
                       marginTop: 10,
                     }}
                   >
-                    请至少输入 6 个字符。请不要使用容易被猜到的密码。
+                    请至少输入 6 个字符，不要使用容易被猜到的密码。
                   </div>
                 </div>
               }
@@ -231,13 +201,7 @@ class Register extends Component {
                     validator: this.checkPassword,
                   },
                 ],
-              })(
-                <Input
-                  size="large"
-                  type="password"
-                  placeholder="密码，6-20位字符，可为字母或数字"
-                />,
-              )}
+              })(<Password size="large" placeholder="密码，6-20位字符，可为字母或数字" />)}
             </Popover>
           </FormItem>
           <FormItem>
@@ -245,13 +209,13 @@ class Register extends Component {
               rules: [
                 {
                   required: true,
-                  message: '两次输入的密码不匹配！',
+                  message: '请输入确认密码！',
                 },
                 {
                   validator: this.checkConfirm,
                 },
               ],
-            })(<Input size="large" type="password" placeholder="确认密码" />)}
+            })(<Password size="large" placeholder="确认密码" />)}
           </FormItem>
           <FormItem>
             <InputGroup compact>
@@ -305,7 +269,7 @@ class Register extends Component {
                   size="large"
                   disabled={!!count}
                   className={styles.getCaptcha}
-                  onClick={this.onFetchCode}
+                  onClick={this.onSendCode}
                 >
                   {count ? `${count} s` : '获取验证码'}
                 </Button>

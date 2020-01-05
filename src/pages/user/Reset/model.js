@@ -17,10 +17,7 @@ const Model = {
           },
         });
       } else {
-        notification.error({
-          message: `错误码 ${response.code}`,
-          description: response.msg,
-        });
+        message.error(response.msg);
       }
     },
   },

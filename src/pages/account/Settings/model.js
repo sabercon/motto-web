@@ -1,6 +1,5 @@
 import router from 'umi/router';
-import { updatePassword, unbindPhone, bindPhone } from '@/services/user';
-import { update } from '@/services/userInfo';
+import { updatePassword, unbindPhone, bindPhone, update } from '@/services/user';
 import { message } from 'antd';
 import provinces from './geographic/province.json';
 import cities from './geographic/city.json';

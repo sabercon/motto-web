@@ -7,9 +7,10 @@ import styles from './style.less';
 const FormItem = Form.Item;
 const { Option } = Select;
 const InputGroup = Input.Group;
+const { Password } = Input;
 const passwordStatusMap = {
-  ok: <div className={styles.success}>强度：强</div>,
-  pass: <div className={styles.warning}>强度：中</div>,
+  ok: <div className={styles.success}>强度：安全</div>,
+  pass: <div className={styles.warning}>强度：中等</div>,
   poor: <div className={styles.error}>强度：太短</div>,
 };
 const passwordProgressMap = {
@@ -18,12 +19,10 @@ const passwordProgressMap = {
   poor: 'exception',
 };
 
-class Register extends Component {
+class Reset extends Component {
   state = {
     count: 0,
-    confirmDirty: false,
     visible: false,
-    help: '',
     prefix: '86',
   };
 
@@ -33,13 +32,13 @@ class Register extends Component {
     clearInterval(this.interval);
   }
 
-  onFetchCode = () => {
+  onSendCode = () => {
     const { form } = this.props;
     form.validateFields(['phone'], {}, (err, values) => {
       if (!err) {
         const { dispatch } = this.props;
         dispatch({
-          type: 'user/fetchCode',
+          type: 'user/sendCode',
           payload: {
             status: 3, // reset
             phone: values.phone,
@@ -109,43 +108,20 @@ class Register extends Component {
   };
 
   checkPassword = (rule, value, callback) => {
-    const { visible, confirmDirty } = this.state;
-
+    const pattern = /^[A-Za-z0-9]{6,20}$/;
+    this.setState({ visible: true });
     if (!value) {
-      this.setState({
-        help: '请输入密码！',
-        visible: !!value,
-      });
-      callback('error');
-    } else {
-      this.setState({
-        help: '',
-      });
-
-      if (!visible) {
-        this.setState({
-          visible: !!value,
-        });
-      }
-
-      if (value.length < 6 || value.length > 20) {
-        this.setState({
-          help: '密码长度错误！',
-          visible: !!value,
-        });
-        callback('error');
-      } else {
-        const { form } = this.props;
-
-        if (value && confirmDirty) {
-          form.validateFields(['confirm'], {
-            force: true,
-          });
-        }
-
-        callback();
-      }
+      this.setState({ visible: false });
+      callback('请输入密码！');
+    } else if (!pattern.test(value)) {
+      this.setState({ visible: false });
+      callback('密码格式错误！');
     }
+    const { form } = this.props;
+    form.validateFields(['confirm'], {
+      force: true,
+    });
+    callback();
   };
 
   changePrefix = value => {
@@ -174,12 +150,12 @@ class Register extends Component {
   render() {
     const { form, submitting } = this.props;
     const { getFieldDecorator } = form;
-    const { count, prefix, help, visible } = this.state;
+    const { count, prefix, visible } = this.state;
     return (
       <div className={styles.main}>
         <h3>重置密码</h3>
         <Form onSubmit={this.handleSubmit}>
-          <FormItem help={help}>
+          <FormItem>
             <Popover
               getPopupContainer={node => {
                 if (node && node.parentNode) {
@@ -201,7 +177,7 @@ class Register extends Component {
                       marginTop: 10,
                     }}
                   >
-                    请至少输入 6 个字符。请不要使用容易被猜到的密码。
+                    请至少输入 6 个字符，不要使用容易被猜到的密码。
                   </div>
                 </div>
               }
@@ -218,9 +194,8 @@ class Register extends Component {
                   },
                 ],
               })(
-                <Input
+                <Password
                   size="large"
-                  type="password"
                   placeholder="新密码，6-20位字符，可为字母或数字"
                 />,
               )}
@@ -237,7 +212,7 @@ class Register extends Component {
                   validator: this.checkConfirm,
                 },
               ],
-            })(<Input size="large" type="password" placeholder="确认密码" />)}
+            })(<Password size="large" placeholder="确认密码" />)}
           </FormItem>
           <FormItem>
             <InputGroup compact>
@@ -291,7 +266,7 @@ class Register extends Component {
                   size="large"
                   disabled={!!count}
                   className={styles.getCaptcha}
-                  onClick={this.onFetchCode}
+                  onClick={this.onSendCode}
                 >
                   {count ? `${count} s` : '获取验证码'}
                 </Button>
@@ -320,4 +295,4 @@ class Register extends Component {
 
 export default connect(({ loading }) => ({
   submitting: loading.effects['reset/submit'],
-}))(Form.create()(Register));
+}))(Form.create()(Reset));
