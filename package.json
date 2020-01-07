@@ -49,6 +49,7 @@
   ],
   "dependencies": {
     "@ant-design/pro-layout": "^4.9.11",
+    "@ant-design/pro-table": "^1.0.29",
     "@antv/data-set": "^0.10.2",
     "@types/react-router": "^5.1.3",
     "antd": "^3.23.6",

@@ -119,6 +119,19 @@ export default {
               component: './Welcome',
             },
             {
+              name: '资源管理',
+              icon: 'folder-open',
+              path: '/resource',
+              routes: [
+                {
+                  name: '文件管理',
+                  icon: 'file',
+                  path: '/resource/file',
+                  component: './resource/File',
+                },
+              ],
+            },
+            {
               name: '个人中心',
               icon: 'user',
               path: '/account',
