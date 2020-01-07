@@ -1,6 +1,4 @@
-import router from 'umi/router';
 import { message } from 'antd';
-import { stringify } from 'querystring';
 import { logout, get } from '@/services/user';
 import { sendCode } from '@/services/sms';
 
