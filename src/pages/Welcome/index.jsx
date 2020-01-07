@@ -52,7 +52,7 @@ export default () => (
         marginTop: 24,
       }}
     >
-      This is the github address of the author{' '}
+      This is the github site of the author{' '}
       <a href=" https://github.com/SaberCon" target="_blank" rel="noopener noreferrer">
         SaberCon
       </a>

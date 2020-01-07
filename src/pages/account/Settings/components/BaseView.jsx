@@ -117,6 +117,9 @@ class BaseView extends Component {
       <div className={styles.baseView}>
         <div className={styles.left}>
           <Form layout="vertical" hideRequiredMark>
+            <FormItem label="用户名">
+              {getFieldDecorator('username')(<Input disabled/>)}
+            </FormItem>
             <FormItem label="昵称">
               {getFieldDecorator('nickname', {
                 rules: [
