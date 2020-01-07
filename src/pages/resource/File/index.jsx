@@ -33,9 +33,7 @@ const handleRemove = async selectedRows => {
   if (!selectedRows) return true;
 
   try {
-    await selectedRows.forEach(row => {
-      del({ id: row.id });
-    });
+    await Promise.all(selectedRows.map(row => del({ id: row.id })));
     hide();
     message.success('删除成功，即将刷新');
     return true;
@@ -50,9 +48,19 @@ const handleQuery = rawParams => {
   const params = {
     pageNum: rawParams.current - 1,
     pageSize: rawParams.pageSize,
-    fuzzyValue: rawParams.name || null,
+    fuzzyValue: rawParams.name || undefined,
   };
-  list(params).then()
+  return list(params).then(response => {
+    if (response.success) {
+      const pageResult = {
+        data: response.data.list,
+        success: true,
+        total: response.data.totalNum,
+      };
+      return pageResult;
+    }
+    return false;
+  });
 }
 
 const TableList = () => {
@@ -68,32 +76,37 @@ const TableList = () => {
       title: '文件类型',
       dataIndex: 'type',
       sorter: true,
+      hideInSearch: true,
     },
     {
       title: '文件大小',
       dataIndex: 'size',
       sorter: true,
+      hideInSearch: true,
       renderText: val => `${(val / 1000000).toFixed(3)} Mb`,
     },
     {
       title: '上传时间',
       dataIndex: 'createTime',
       sorter: true,
+      hideInSearch: true,
       valueType: 'dateTime',
     },
     {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
-      render: (action, record) => (
+      render: (_, record) => (
         <>
           <a href={record.url}>下载</a>
           <Divider type="vertical" />
           <a
-            color="red"
+            style={{color: 'red'}}
             onClick={async () => {
-              await handleRemove([record]);
-              action.reload();
+              const success = await handleRemove([record]);
+              if (success && actionRef.current) {
+                actionRef.current.reload();
+              }
             }}
           >
             删除
