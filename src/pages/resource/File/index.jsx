@@ -127,8 +127,8 @@ const TableList = () => {
         actionRef={actionRef}
         rowKey="id"
         toolBarRender={(action, { selectedRows }) => [
-          <Button icon="plus" type="primary" onClick={() => handleModalVisible(true)}>
-            新建
+          <Button icon="upload" type="primary" onClick={() => handleModalVisible(true)}>
+            上传
           </Button>,
           selectedRows && selectedRows.length > 0 && (
             <Dropdown
