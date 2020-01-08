@@ -1,4 +1,4 @@
-import { Button, Divider, Dropdown, Form, Icon, Menu, message } from 'antd';
+import { Button, Divider, Dropdown, Form, Icon, Menu, message, Modal } from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
@@ -44,6 +44,21 @@ const handleRemove = async selectedRows => {
   }
 };
 
+const showDeleteConfirm = (record, actionRef) => {
+  Modal.confirm({
+    title: '你确定要删除文件吗',
+    content: '删除文件后无法恢复',
+    okType: 'danger',
+    onOk() {
+      handleRemove([record]).then(success => {
+        if (success && actionRef.current) {
+          actionRef.current.reload();
+        }
+      })
+    },
+  });
+};
+
 const handleQuery = rawParams => {
   const params = {
     pageNum: rawParams.current - 1,
@@ -70,25 +85,21 @@ const TableList = () => {
     {
       title: '文件名称',
       dataIndex: 'name',
-      sorter: true,
     },
     {
       title: '文件类型',
       dataIndex: 'type',
-      sorter: true,
       hideInSearch: true,
     },
     {
       title: '文件大小',
       dataIndex: 'size',
-      sorter: true,
       hideInSearch: true,
       renderText: val => `${(val / 1000000).toFixed(3)} Mb`,
     },
     {
       title: '上传时间',
       dataIndex: 'createTime',
-      sorter: true,
       hideInSearch: true,
       valueType: 'dateTime',
     },
@@ -102,12 +113,7 @@ const TableList = () => {
           <Divider type="vertical" />
           <a
             style={{color: 'red'}}
-            onClick={async () => {
-              const success = await handleRemove([record]);
-              if (success && actionRef.current) {
-                actionRef.current.reload();
-              }
-            }}
+            onClick={() => showDeleteConfirm(record, actionRef)}
           >
             删除
           </a>
@@ -167,6 +173,9 @@ const TableList = () => {
         request={params => handleQuery(params)}
         columns={columns}
         rowSelection={{}}
+        pagination={{
+          showSizeChanger: true,
+        }}
       />
       <CreateForm
         onSubmit={async value => {
