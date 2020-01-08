@@ -1,4 +1,4 @@
-import { Form, Modal, Upload, Icon, message } from 'antd';
+import { Modal, Upload, Icon, message } from 'antd';
 import React, { Component } from 'react';
 
 const { Dragger } = Upload;
@@ -14,7 +14,6 @@ class CreateForm extends Component {
     });
     const { status } = file;
     if (status === 'done' && file.response.success) {
-      console.log(fileList);
       message.success(` ${file.name} 文件上传成功！`);
     } else if (status === 'error') {
       message.error(` ${file.name} 文件上传失败！`);
@@ -24,13 +23,15 @@ class CreateForm extends Component {
   okHandle = () => {
     const { onSubmit: handleAdd } = this.props;
     const { fileList } = this.state;
-    const values = fileList.map(file => ({
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        url: file.response.data,
+    const paramsList = fileList.filter(file => file.status === 'done' && file.response.success).map(file => ({
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      url: file.response.data,
     }));
-    handleAdd(values);
+    handleAdd(paramsList).then(() => {
+      this.setState({ fileList: [] });
+    });
   };
 
   render() {
@@ -56,7 +57,7 @@ class CreateForm extends Component {
           </p>
           <p className="ant-upload-text">点击此处或拖拽文件到此处实现上传</p>
           <p className="ant-upload-hint">
-            支持多文件上传，注意不要上传超大文件。敏感资料请谨慎上传。
+            支持多文件上传，注意不要上传超过100MB的文件
           </p>
         </Dragger>
       </Modal>
@@ -64,4 +65,4 @@ class CreateForm extends Component {
   }
 }
 
-export default Form.create()(CreateForm);
+export default CreateForm;

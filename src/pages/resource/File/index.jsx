@@ -7,13 +7,15 @@ import { save, del, list } from '@/services/file';
 
 /**
  * 添加节点
- * @param fields
+ * @param paramsList
  */
-const handleAdd = async fields => {
+const handleAdd = async paramsList => {
+  if (!paramsList || !paramsList.length) {
+    return true;
+  }
   const hide = message.loading('正在添加');
-
   try {
-    await save(fields);
+    await Promise.all(paramsList.map(params => save(params)));
     hide();
     message.success('添加成功');
     return true;
@@ -54,7 +56,7 @@ const showDeleteConfirm = (record, actionRef) => {
         if (success && actionRef.current) {
           actionRef.current.reload();
         }
-      })
+      });
     },
   });
 };
@@ -76,7 +78,7 @@ const handleQuery = rawParams => {
     }
     return false;
   });
-}
+};
 
 const TableList = () => {
   const [createModalVisible, handleModalVisible] = useState(false);
@@ -111,10 +113,7 @@ const TableList = () => {
         <>
           <a href={record.url}>下载</a>
           <Divider type="vertical" />
-          <a
-            style={{color: 'red'}}
-            onClick={() => showDeleteConfirm(record, actionRef)}
-          >
+          <a style={{ color: 'red' }} onClick={() => showDeleteConfirm(record, actionRef)}>
             删除
           </a>
         </>
