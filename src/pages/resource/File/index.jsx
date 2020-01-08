@@ -95,7 +95,7 @@ const TableList = () => {
       title: '文件大小',
       dataIndex: 'size',
       hideInSearch: true,
-      renderText: val => `${(val / 1000000).toFixed(3)} Mb`,
+      renderText: val => `${(val / 1000000).toFixed(3)} MB`,
     },
     {
       title: '上传时间',
@@ -166,7 +166,7 @@ const TableList = () => {
             项&nbsp;&nbsp;
             <span>
               文件大小总计{' '}
-              {(selectedRows.reduce((pre, item) => pre + item.size, 0) / 1000000).toFixed(3)} Mb
+              {(selectedRows.reduce((pre, item) => pre + item.size, 0) / 1000000).toFixed(3)} MB
             </span>
           </div>
         )}
