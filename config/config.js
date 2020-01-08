@@ -129,6 +129,12 @@ export default {
                   path: '/resource/file',
                   component: './resource/File',
                 },
+                {
+                  name: '图片管理',
+                  icon: 'file-image',
+                  path: '/resource/image',
+                  component: './resource/Image',
+                },
               ],
             },
             {

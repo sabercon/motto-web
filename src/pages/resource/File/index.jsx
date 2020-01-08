@@ -111,7 +111,7 @@ const TableList = () => {
       valueType: 'option',
       render: (_, record) => (
         <>
-          <a href={record.url}>下载</a>
+          <a href={record.url}><Icon type="download" />&nbsp;下载</a>
           <Divider type="vertical" />
           <a style={{ color: 'red' }} onClick={() => showDeleteConfirm(record, actionRef)}>
             删除
