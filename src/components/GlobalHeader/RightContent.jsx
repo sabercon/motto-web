@@ -19,8 +19,8 @@ const GlobalHeaderRight = props => {
       <HeaderSearch
         className={`${styles.action} ${styles.search}`}
         placeholder="站内搜索"
-        defaultValue="SaberCon"
-        dataSource={['搜索项一', '搜索项二']}
+        // defaultValue="SaberCon"
+        // dataSource={['搜索项一', '搜索项二']}
         onSearch={value => {
           console.log('input', value);
         }}
