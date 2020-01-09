@@ -14,6 +14,6 @@ export async function del({ id }) {
     method: 'DELETE',
   });
 }
-export async function getPage(params) {
-  return request(baseUrl, { params });
+export async function getList({ start, size}) {
+  return request(`${baseUrl}/${start}/${size}`);
 }

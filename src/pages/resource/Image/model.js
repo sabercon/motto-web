@@ -1,22 +1,33 @@
-import { queryFakeList } from './service';
+import { getList } from '@/services/image';
+import { message } from 'antd';
 
 const Model = {
   namespace: 'resourceImage',
   state: {
+    noMore: false,
     list: [],
   },
   effects: {
-    *fetch({ payload }, { call, put }) {
-      const response = yield call(queryFakeList, payload);
+    *fetchMore({ payload },{ call, put }) {
+      const response = yield call(getList, payload);
+      if (!response.success) {
+        message.error("加载失败！");
+        return;
+      }
       yield put({
-        type: 'queryList',
-        payload: Array.isArray(response) ? response : [],
+        type: 'appendList',
+        payload: response.data,
       });
     },
   },
   reducers: {
-    queryList(state, action) {
-      return { ...state, list: action.payload };
+    appendList(state, action) {
+      const newList = [...state.list, ...action.payload];
+      const noMore = !!(!action.payload || action.length);
+      return { ...state, list: newList, noMore };
+    },
+    reset(state) {
+      return { ...state, list: [], noMore: false };
     },
   },
 };
