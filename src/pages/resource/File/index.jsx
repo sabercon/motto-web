@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
-import { save, del, list } from '@/services/file';
+import { save, del, getPage } from '@/services/file';
 
 /**
  * 添加节点
@@ -67,7 +67,7 @@ const handleQuery = rawParams => {
     pageSize: rawParams.pageSize,
     fuzzyValue: rawParams.name || undefined,
   };
-  return list(params).then(response => {
+  return getPage(params).then(response => {
     if (response.success) {
       const pageResult = {
         data: response.data.list,

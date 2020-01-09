@@ -1,16 +1,39 @@
-import { Card, Form, List, Typography, Input, Button, Icon } from 'antd';
+import { Card, Form, List, Typography, Input, Button, Icon, message } from 'antd';
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import StandardFormRow from './components/StandardFormRow';
 import TagSelect from './components/TagSelect';
+import CreateForm from './components/CreateForm';
 import styles from './style.less';
+import { save, del, getPage } from '@/services/image';
 
 const FormItem = Form.Item;
 const { Paragraph } = Typography;
 
+const handleAdd = async paramsList => {
+  if (!paramsList || !paramsList.length) {
+    return true;
+  }
+  const hide = message.loading('正在添加');
+  try {
+    await Promise.all(paramsList.map(params => save(params)));
+    hide();
+    message.success('添加成功');
+    return true;
+  } catch (error) {
+    hide();
+    message.error('添加失败请重试！');
+    return false;
+  }
+};
+
 class Image extends Component {
+  state = {
+    createModalVisible: false,
+  }
+
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
@@ -28,6 +51,7 @@ class Image extends Component {
       form,
     } = this.props;
     const { getFieldDecorator } = form;
+    const { createModalVisible } = this.state;
     const cardList = list && (
       <List
         rowKey="id"
@@ -73,7 +97,9 @@ class Image extends Component {
 
           return (
             <List.Item>
-              <Button type="dashed" className={styles.newButton}>
+              <Button type="dashed" className={styles.newButton} onClick={() => {
+                this.setState({ createModalVisible: true });
+              }}>
                 <Icon type="plus" /> 新增图片
               </Button>
             </List.Item>
@@ -119,6 +145,18 @@ class Image extends Component {
           {cardList}
         </div>
       </div>
+      <CreateForm
+        onSubmit={async value => {
+          const success = await handleAdd(value);
+          if (success) {
+            this.setState({ createModalVisible: false });
+          }
+        }}
+        onCancel={() => {
+          this.setState({ createModalVisible: false });
+        }}
+        modalVisible={createModalVisible}
+      />
       </PageHeaderWrapper>
     );
   }
