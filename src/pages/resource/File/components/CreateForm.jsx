@@ -10,7 +10,7 @@ class CreateForm extends Component {
 
   onChange = ({ file, fileList }) => {
     this.setState({
-      fileList: [...fileList],
+      fileList,
     });
     const { status } = file;
     if (status === 'done' && file.response.success) {

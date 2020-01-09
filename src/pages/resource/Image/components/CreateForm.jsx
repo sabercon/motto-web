@@ -1,16 +1,16 @@
 import { Modal, Upload, Icon, message } from 'antd';
 import React, { Component } from 'react';
 
-const { Dragger } = Upload;
-
 class CreateForm extends Component {
   state = {
+    previewVisible: false,
+    previewImage: '',
     fileList: [],
   };
 
   onChange = ({ file, fileList }) => {
     this.setState({
-      fileList: [...fileList],
+      fileList,
     });
     const { status } = file;
     if (status === 'done' && file.response.success) {
@@ -23,20 +23,39 @@ class CreateForm extends Component {
   okHandle = () => {
     const { onSubmit } = this.props;
     const { fileList } = this.state;
-    const paramsList = fileList.filter(file => file.status === 'done' && file.response.success).map(file => ({
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      url: file.response.data,
-    }));
+    const paramsList = fileList
+      .filter(file => file.status === 'done' && file.response.success)
+      .map(file => ({
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        url: file.response.data,
+      }));
     onSubmit(paramsList).then(() => {
       this.setState({ fileList: [] });
     });
   };
 
+  handlePreviewCancel = () => this.setState({ previewVisible: false });
+
+  handlePreview = async file => {
+    if (file.status !== 'done' || !file.response.success) return;
+
+    this.setState({
+      previewImage: file.response.data,
+      previewVisible: true,
+    });
+  };
+
   render() {
     const { modalVisible, onCancel } = this.props;
-    const { fileList } = this.state;
+    const { previewVisible, previewImage, fileList } = this.state;
+    const uploadButton = (
+      <div>
+        <Icon type="plus" />
+        <div className="ant-upload-text">上传</div>
+      </div>
+    );
     return (
       <Modal
         destroyOnClose
@@ -45,21 +64,20 @@ class CreateForm extends Component {
         onOk={this.okHandle}
         onCancel={() => onCancel()}
       >
-        <Dragger
-          name="file"
-          multiple
-          action="/api/oss/file"
+        <Upload
+          name="img"
+          action="/api/oss/img"
+          listType="picture-card"
+          accept=".bmp,.gif,.jpg,.jpeg,.png,.svg,.tiff,.webp"
           fileList={fileList}
+          onPreview={this.handlePreview}
           onChange={this.onChange}
         >
-          <p className="ant-upload-drag-icon">
-            <Icon type="inbox" />
-          </p>
-          <p className="ant-upload-text">点击此处或拖拽文件到此处实现上传</p>
-          <p className="ant-upload-hint">
-            支持多文件上传，注意不要上传超过100MB的文件
-          </p>
-        </Dragger>
+          {fileList.length >= 12 ? null : uploadButton}
+        </Upload>
+        <Modal visible={previewVisible} footer={null} onCancel={this.handlePreviewCancel}>
+          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        </Modal>
       </Modal>
     );
   }

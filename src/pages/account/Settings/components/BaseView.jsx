@@ -94,7 +94,7 @@ class BaseView extends Component {
 
   uploadAvatar = ({ file, fileList }) => {
     this.setState({
-      fileList: [...fileList],
+      fileList,
     });
     if (file.status !== 'done') return;
     if (file.response.success) {
