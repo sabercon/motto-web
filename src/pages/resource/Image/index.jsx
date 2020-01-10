@@ -1,11 +1,15 @@
-import { Card, List, Button, Icon, message } from 'antd';
+import { Card, List, Button, Icon, message, Tooltip } from 'antd';
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import CreateForm from './components/CreateForm';
 import styles from './style.less';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import Zmage from 'react-zmage';
 import { save, del } from '@/services/image';
+
+const copyUrl = url => {};
 
 class Image extends Component {
   state = {
@@ -126,16 +130,28 @@ class Image extends Component {
                       style={{ backgroundImage: `url(${item.thumbnailUrl})` }}
                     >
                       <span className={styles.cardActions}>
-                        <Icon type="eye"/>
-                        <Icon type="copy"/>
-                        <Icon type="delete"/>
+                        <Tooltip title="参看原图">
+                          <Icon type="eye" onClick={() => Zmage.browsing({ src: item.url })} />
+                        </Tooltip>
+                        <CopyToClipboard text={item.url} onCopy={() => message.info('复制成功！')}>
+                          <Tooltip title="复制链接">
+                            <Icon type="copy" onClick={() => copyUrl(item.url)} />
+                          </Tooltip>
+                        </CopyToClipboard>
+                        <Tooltip title="删除图片">
+                          <Icon type="delete" onClick={() => copyUrl(item.url)} />
+                        </Tooltip>
                       </span>
                     </div>
                   }
                 >
                   <Card.Meta
                     className={styles.cardTitle}
-                    title={<a href={item.url} target="_blank" rel="noopener noreferrer">{item.name}</a>}
+                    title={
+                      <a href={item.url} target="_blank" rel="noopener noreferrer">
+                        {item.name}
+                      </a>
+                    }
                   />
                   <div className={styles.cardItemContent}>
                     <span>{moment(item.createTime).fromNow()}</span>
