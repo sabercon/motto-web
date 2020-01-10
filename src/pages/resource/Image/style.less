@@ -73,8 +73,45 @@
   }
 
   .cardImg {
+    position: relative;
     height: 150px;
     background-size: cover;
     background-position: center;
+    white-space: nowrap;
+    .cardActions {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      transition: all 0.3s;
+      font-size: 30px;
+      opacity: 0;
+      i {
+        margin: 0 10px;
+        transition: all 0.3s;
+        color: lightgrey;
+        &:hover {
+          color: deepskyblue;
+        }
+      }
+    }
+    &:before {
+      content: ' ';
+      position: absolute;
+      z-index: 0;
+      background-color: fade(#000, 50%);
+      transition: all 0.3s;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+    }
+    &:hover {
+      .cardActions {
+        opacity: 1;
+      }
+      &:before {
+        opacity: 1;
+      }
+    }
   }
 }

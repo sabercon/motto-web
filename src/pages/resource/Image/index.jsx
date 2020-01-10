@@ -1,4 +1,4 @@
-import { Card, List, Typography, Button, Icon, message } from 'antd';
+import { Card, List, Button, Icon, message } from 'antd';
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
@@ -6,8 +6,6 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import CreateForm from './components/CreateForm';
 import styles from './style.less';
 import { save, del } from '@/services/image';
-
-const { Paragraph } = Typography;
 
 class Image extends Component {
   state = {
@@ -126,7 +124,13 @@ class Image extends Component {
                     <div
                       className={styles.cardImg}
                       style={{ backgroundImage: `url(${item.thumbnailUrl})` }}
-                    />
+                    >
+                      <span className={styles.cardActions}>
+                        <Icon type="eye"/>
+                        <Icon type="copy"/>
+                        <Icon type="delete"/>
+                      </span>
+                    </div>
                   }
                 >
                   <Card.Meta
