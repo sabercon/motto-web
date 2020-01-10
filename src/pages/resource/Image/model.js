@@ -44,6 +44,15 @@ const Model = {
     reset(state) {
       return { ...state, list: [], appendable: true };
     },
+    delete(state, action) {
+      const { id } = action.payload;
+      const list = [...state.list];
+      const index = list.findIndex(e => e.id === id);
+      if (index >= 0) {
+        list.splice(index, 1);
+      }
+      return { ...state, list };
+    },
   },
 };
 export default Model;

@@ -62,16 +62,6 @@
     }
   }
 
-  .newButton {
-    width: 100%;
-    height: 200px;
-    font-size: large;
-    color: @text-color-secondary;
-    background-color: @component-background;
-    border-color: @border-color-base;
-    border-radius: @border-radius-sm;
-  }
-
   .cardImg {
     position: relative;
     height: 150px;
@@ -114,4 +104,15 @@
       }
     }
   }
+}
+
+// 单独放出以免覆盖默认hover样式
+.newButton {
+  width: 100%;
+  height: 212px;
+  font-size: large;
+  color: @text-color-secondary;
+  background-color: @component-background;
+  border-color: @border-color-base;
+  border-radius: @border-radius-sm;
 }

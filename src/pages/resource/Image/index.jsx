@@ -9,8 +9,6 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Zmage from 'react-zmage';
 import { save, del } from '@/services/image';
 
-const copyUrl = url => {};
-
 class Image extends Component {
   state = {
     createModalVisible: false,
@@ -135,11 +133,27 @@ class Image extends Component {
                         </Tooltip>
                         <CopyToClipboard text={item.url} onCopy={() => message.info('复制成功！')}>
                           <Tooltip title="复制链接">
-                            <Icon type="copy" onClick={() => copyUrl(item.url)} />
+                            <Icon type="copy" />
                           </Tooltip>
                         </CopyToClipboard>
                         <Tooltip title="删除图片">
-                          <Icon type="delete" onClick={() => copyUrl(item.url)} />
+                          <Icon type="delete" onClick={ async () => {
+                                try {
+                                  const response = await del({ id: item.id });
+                                  if (response.success) {
+                                    message.success('删除成功');
+                                    const { dispatch } = this.props;
+                                    dispatch({
+                                      type: 'resourceImage/delete',
+                                      payload: {
+                                        id: item.id,
+                                      },
+                                    });
+                                  }
+                                } catch (error) {
+                                  message.error('删除失败请重试！');
+                                }
+                          }} />
                         </Tooltip>
                       </span>
                     </div>
@@ -169,6 +183,7 @@ class Image extends Component {
                 onClick={() => {
                   this.setState({ createModalVisible: true });
                 }}
+                ghost
               >
                 <Icon type="plus" /> 新增图片
               </Button>
