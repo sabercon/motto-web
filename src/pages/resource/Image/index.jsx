@@ -130,17 +130,8 @@ class Image extends Component {
                   }
                 >
                   <Card.Meta
-                    title={<a>{item.name}</a>}
-                    description={
-                      <Paragraph
-                        className={styles.item}
-                        ellipsis={{
-                          rows: 2,
-                        }}
-                      >
-                        {item.type}
-                      </Paragraph>
-                    }
+                    className={styles.cardTitle}
+                    title={<a href={item.url} target="_blank" rel="noopener noreferrer">{item.name}</a>}
                   />
                   <div className={styles.cardItemContent}>
                     <span>{moment(item.createTime).fromNow()}</span>
