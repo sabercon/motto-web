@@ -66,7 +66,7 @@ class Image extends Component {
         size: 12,
       },
     });
-  }
+  };
 
   render() {
     const {
@@ -80,7 +80,7 @@ class Image extends Component {
         style={{
           textAlign: 'center',
           marginTop: 16,
-          position: "relative",
+          position: 'relative',
         }}
       >
         <Button
@@ -122,7 +122,12 @@ class Image extends Component {
                 <Card
                   className={styles.card}
                   hoverable
-                  cover={<img alt={item.name} src={item.thumbnailUrl} />}
+                  cover={
+                    <div
+                      className={styles.cardImg}
+                      style={{ backgroundImage: `url(${item.thumbnailUrl})` }}
+                    />
+                  }
                 >
                   <Card.Meta
                     title={<a>{item.name}</a>}
