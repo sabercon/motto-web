@@ -131,7 +131,7 @@ class Image extends Component {
                         <Tooltip title="参看原图">
                           <Icon type="eye" onClick={() => Zmage.browsing({ src: item.url })} />
                         </Tooltip>
-                        <CopyToClipboard text={item.url} onCopy={() => message.info('复制成功！')}>
+                        <CopyToClipboard text={item.url} onCopy={() => message.info(` ${item.name} 链接复制成功！`)}>
                           <Tooltip title="复制链接">
                             <Icon type="copy" />
                           </Tooltip>

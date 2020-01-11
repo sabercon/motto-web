@@ -119,6 +119,25 @@ export default {
               component: './Welcome',
             },
             {
+              name: '文章管理',
+              icon: 'file-text',
+              path: '/article',
+              routes: [
+                {
+                  name: '增改文章',
+                  icon: 'edit',
+                  path: '/article/edit',
+                  component: './article/Edit',
+                },
+                {
+                  name: '文章列表',
+                  icon: 'bars',
+                  path: '/article/list',
+                  component: './article/List',
+                },
+              ],
+            },
+            {
               name: '资源管理',
               icon: 'folder-open',
               path: '/resource',
@@ -131,7 +150,7 @@ export default {
                 },
                 {
                   name: '图片管理',
-                  icon: 'file-image',
+                  icon: 'picture',
                   path: '/resource/image',
                   component: './resource/Image',
                 },
