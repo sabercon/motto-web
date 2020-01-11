@@ -126,7 +126,7 @@ export default {
                 {
                   name: '增改文章',
                   icon: 'edit',
-                  path: '/article/edit',
+                  path: '/article/edit/:id',
                   component: './article/Edit',
                 },
                 {

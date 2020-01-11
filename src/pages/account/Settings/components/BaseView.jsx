@@ -21,7 +21,7 @@ const AvatarView = ({ avatar, onChange, fileList }) => (
       fileList={fileList}
       name="img"
       action="/api/oss/img"
-      accept=".bmp,.gif,.jpg,.jpeg,.png,.svg,.tiff,.webp"
+      accept="image/*"
       onChange={onChange}
       showUploadList={false}
     >

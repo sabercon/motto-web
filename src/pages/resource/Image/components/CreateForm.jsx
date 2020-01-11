@@ -68,7 +68,7 @@ class CreateForm extends Component {
           name="img"
           action="/api/oss/img"
           listType="picture-card"
-          accept=".bmp,.gif,.jpg,.jpeg,.png,.svg,.tiff,.webp"
+          accept="image/*"
           fileList={fileList}
           onPreview={this.handlePreview}
           onChange={this.onChange}
