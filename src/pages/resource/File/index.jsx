@@ -87,21 +87,33 @@ const TableList = () => {
     {
       title: '文件名称',
       dataIndex: 'name',
+      ellipsis: true,
+      width: 220,
+      align: 'center',
     },
     {
       title: '文件类型',
       dataIndex: 'type',
+      ellipsis: true,
+      width: 220,
+      align: 'center',
       hideInSearch: true,
     },
     {
       title: '文件大小',
       dataIndex: 'size',
+      ellipsis: true,
+      width: 200,
+      align: 'center',
       hideInSearch: true,
       renderText: val => `${(val / 1000000).toFixed(3)} MB`,
     },
     {
       title: '上传时间',
       dataIndex: 'createTime',
+      ellipsis: true,
+      width: 200,
+      align: 'center',
       hideInSearch: true,
       valueType: 'dateTime',
     },
@@ -109,6 +121,7 @@ const TableList = () => {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
+      align: 'center',
       render: (_, record) => (
         <>
           <a href={record.url} download={record.name}><Icon type="download" />&nbsp;下载</a>
