@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import BraftEditor from 'braft-editor';
 import { ContentUtils } from 'braft-utils';
 import { Form, Input, Button, Card, Radio, message, Upload, Icon } from 'antd';
+import MonacoEditor from 'react-monaco-editor';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { save, get } from '@/services/article';
 
@@ -153,7 +154,8 @@ class Edit extends Component {
           </style>
         </head>
         <body>
-          <div class="container">${this.props.form.getFieldValue('html') && this.props.form.getFieldValue('html').toHTML()}</div>
+          <div class="container">${this.props.form.getFieldValue('html') &&
+            this.props.form.getFieldValue('html').toHTML()}</div>
         </body>
       </html>
     `;
@@ -349,19 +351,9 @@ class Edit extends Component {
               >
                 提交
               </Button>
-              <Button
-                size="large"
-                type="primary"
-                htmlType="reset"
-                style={{
-                  marginLeft: 8,
-                  marginTop: 8,
-                }}
-              >
-                重置
-              </Button>
             </FormItem>
           </Form>
+          <MonacoEditor width="800" height="600" language="markdown" theme="vs-dark" />
         </Card>
       </PageHeaderWrapper>
     );
