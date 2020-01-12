@@ -31,6 +31,7 @@ class ArticleList extends Component {
     type: undefined,
     total: undefined,
     list: [],
+    loading: false,
   };
 
   formLayout = {
@@ -61,12 +62,14 @@ class ArticleList extends Component {
 
   queryPage = async () => {
     const { pageNum, pageSize, title, type } = this.state;
+    this.setState({loading: true});
     const response = await getPage({
       pageNum: pageNum - 1,
       pageSize,
       fuzzyValue: title,
       equalValue: type,
     });
+    this.setState({loading: false});
     if (response.success && response.data) {
       this.setState({
         list: response.data.list,
@@ -94,7 +97,7 @@ class ArticleList extends Component {
   }
 
   render() {
-    const { pageNum, pageSize, type, total, list } = this.state;
+    const { pageNum, pageSize, type, total, list, loading } = this.state;
 
     const extraContent = (
       <div className={styles.extraContent}>
@@ -206,7 +209,7 @@ class ArticleList extends Component {
               <List
                 size="large"
                 rowKey="id"
-                loading={this.props.loading}
+                loading={loading}
                 pagination={paginationProps}
                 dataSource={list}
                 renderItem={item => (
@@ -241,7 +244,6 @@ class ArticleList extends Component {
   }
 }
 
-export default connect(({ user, loading }) => ({
+export default connect(({ user}) => ({
   currentUser: user.currentUser,
-  loading: loading.models.articleList,
 }))(ArticleList);
