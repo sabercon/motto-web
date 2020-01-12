@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import BraftEditor from 'braft-editor';
 import { ContentUtils } from 'braft-utils';
 import { Form, Input, Button, Card, Radio, message, Upload, Icon } from 'antd';
-import MonacoEditor from 'react-monaco-editor';
+// import MonacoEditor from 'react-monaco-editor';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { save, get } from '@/services/article';
 
@@ -65,9 +65,9 @@ class Edit extends Component {
           const submitData = { title, note, type, text, rawJson, id };
           save(submitData).then(response => {
             if (response.success) {
-              message.success('文章添加成功！');
+              message.success('操作成功！');
             } else {
-              message.error('文章添加失败');
+              message.error('操作失败请重试！');
             }
           });
         }
@@ -336,9 +336,12 @@ class Edit extends Component {
                       message: '请输入内容',
                     },
                   ],
-                })(<Input />)}
+                })(
+                  <Input.TextArea allowClear rows="25" wrap="hard" />,
+                )}
               </FormItem>
             )}
+            {/* <MonacoEditor width="800" height="600" language="markdown" theme="vs-dark" /> */}
             <FormItem {...submitFormLayout}>
               <Button
                 size="large"
@@ -353,7 +356,6 @@ class Edit extends Component {
               </Button>
             </FormItem>
           </Form>
-          <MonacoEditor width="800" height="600" language="markdown" theme="vs-dark" />
         </Card>
       </PageHeaderWrapper>
     );

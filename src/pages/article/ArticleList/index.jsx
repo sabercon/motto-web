@@ -16,7 +16,7 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import moment from 'moment';
 import { getPage, del } from '@/services/article';
-import { router } from 'umi';
+import { router, Link } from 'umi';
 import styles from './style.less';
 
 const RadioButton = Radio.Button;
@@ -62,14 +62,14 @@ class ArticleList extends Component {
 
   queryPage = async () => {
     const { pageNum, pageSize, title, type } = this.state;
-    this.setState({loading: true});
+    this.setState({ loading: true });
     const response = await getPage({
       pageNum: pageNum - 1,
       pageSize,
       fuzzyValue: title,
       equalValue: type,
     });
-    this.setState({loading: false});
+    this.setState({ loading: false });
     if (response.success && response.data) {
       this.setState({
         list: response.data.list,
@@ -89,12 +89,12 @@ class ArticleList extends Component {
   };
 
   changeType = type => {
-   if (type === this.state.type) {
-    this.setState({type: undefined, pageNum: 1});
-   } else {
-     this.setState({type, pageNum: 1});
-   }
-  }
+    if (type === this.state.type) {
+      this.setState({ type: undefined, pageNum: 1 });
+    } else {
+      this.setState({ type, pageNum: 1 });
+    }
+  };
 
   render() {
     const { pageNum, pageSize, type, total, list, loading } = this.state;
@@ -108,8 +108,12 @@ class ArticleList extends Component {
           <Icon type="reload" />
         </a>
         <RadioGroup value={type}>
-          <RadioButton onClick={e => this.changeType(e.target.value)} value="html">Html富文本</RadioButton>
-          <RadioButton onClick={e => this.changeType(e.target.value)} value="markdown">Markdown文本</RadioButton>
+          <RadioButton onClick={e => this.changeType(e.target.value)} value="html">
+            Html富文本
+          </RadioButton>
+          <RadioButton onClick={e => this.changeType(e.target.value)} value="markdown">
+            Markdown文本
+          </RadioButton>
         </RadioGroup>
         <Search
           className={styles.extraContentSearch}
@@ -164,6 +168,8 @@ class ArticleList extends Component {
                 Modal.confirm({
                   title: '删除文章',
                   content: '确定删除该文章吗？',
+                  okText: '确定',
+                  cancelText: '取消',
                   onOk: () => this.deleteItem(item.id),
                 });
               }}
@@ -215,13 +221,7 @@ class ArticleList extends Component {
                 renderItem={item => (
                   <List.Item
                     actions={[
-                      <a
-                        onClick={e => {
-                          e.preventDefault();
-                        }}
-                      >
-                        阅读
-                      </a>,
+                      <Link to={`/article/read/${item.id}`}>阅读</Link>,
                       <MoreBtn key="more" item={item} />,
                     ]}
                   >
@@ -244,6 +244,6 @@ class ArticleList extends Component {
   }
 }
 
-export default connect(({ user}) => ({
+export default connect(({ user }) => ({
   currentUser: user.currentUser,
 }))(ArticleList);

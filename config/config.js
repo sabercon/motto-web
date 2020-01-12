@@ -135,6 +135,13 @@ export default {
                   path: '/article/list',
                   component: './article/ArticleList',
                 },
+                {
+                  name: '阅读文章',
+                  icon: 'read',
+                  hideInMenu:true,
+                  path: '/article/read/:id',
+                  component: './article/Read',
+                },
               ],
             },
             {
