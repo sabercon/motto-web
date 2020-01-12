@@ -156,6 +156,15 @@ class Edit extends Component {
         <body>
           <div class="container">${this.props.form.getFieldValue('html') &&
             this.props.form.getFieldValue('html').toHTML()}</div>
+          <ul><li>133333</li></ul>
+          <ol><li>133333</li></ol>
+          <h1>hello</h1>
+          <h2>hello</h2>
+          <h3>hello</h3>
+          <h4>hello</h4>
+          <h5>hello</h5>
+          <h6>hello</h6>
+          
         </body>
       </html>
     `;
