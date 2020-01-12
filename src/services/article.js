@@ -18,5 +18,5 @@ export async function get({ id }) {
   return request(`${baseUrl}/${id}`);
 }
 export async function getPage(params) {
-  return request(baseUrl, { params });
+  return request(`${baseUrl}/list`, { params });
 }

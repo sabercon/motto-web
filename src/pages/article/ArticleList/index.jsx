@@ -2,39 +2,35 @@ import {
   Avatar,
   Button,
   Card,
-  Col,
-  DatePicker,
   Dropdown,
-  Form,
   Icon,
   Input,
   List,
   Menu,
   Modal,
-  Progress,
   Radio,
-  Row,
-  Select,
-  Result,
+  message,
 } from 'antd';
 import React, { Component } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
-import { findDOMNode } from 'react-dom';
 import moment from 'moment';
+import { getPage, del } from '@/services/article';
+import { router } from 'umi';
 import styles from './style.less';
 
-const FormItem = Form.Item;
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
-const SelectOption = Select.Option;
-const { Search, TextArea } = Input;
+const { Search } = Input;
 
 class ArticleList extends Component {
   state = {
-    visible: false,
-    done: false,
-    current: undefined,
+    pageNum: 1,
+    pageSize: 10,
+    title: undefined,
+    type: undefined,
+    total: undefined,
+    list: [],
   };
 
   formLayout = {
@@ -49,153 +45,100 @@ class ArticleList extends Component {
   addBtn = undefined;
 
   componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'articleList/fetch',
-      payload: {
-        count: 5,
-      },
-    });
+    this.queryPage();
   }
 
-  showModal = () => {
-    this.setState({
-      visible: true,
-      current: undefined,
-    });
-  };
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      prevState.pageNum !== this.state.pageNum ||
+      prevState.pageSize !== this.state.pageSize ||
+      prevState.title !== this.state.title ||
+      prevState.type !== this.state.type
+    ) {
+      this.queryPage();
+    }
+  }
 
-  showEditModal = item => {
-    this.setState({
-      visible: true,
-      current: item,
+  queryPage = async () => {
+    const { pageNum, pageSize, title, type } = this.state;
+    const response = await getPage({
+      pageNum: pageNum - 1,
+      pageSize,
+      fuzzyValue: title,
+      equalValue: type,
     });
-  };
-
-  handleDone = () => {
-    setTimeout(() => this.addBtn && this.addBtn.blur(), 0);
-    this.setState({
-      done: false,
-      visible: false,
-    });
-  };
-
-  handleCancel = () => {
-    setTimeout(() => this.addBtn && this.addBtn.blur(), 0);
-    this.setState({
-      visible: false,
-    });
-  };
-
-  handleSubmit = e => {
-    e.preventDefault();
-    const { dispatch, form } = this.props;
-    const { current } = this.state;
-    const id = current ? current.id : '';
-    setTimeout(() => this.addBtn && this.addBtn.blur(), 0);
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
+    if (response.success && response.data) {
       this.setState({
-        done: true,
+        list: response.data.list,
+        total: response.data.totalNum,
       });
-      dispatch({
-        type: 'articleList/submit',
-        payload: {
-          id,
-          ...fieldsValue,
-        },
-      });
-    });
+    }
   };
 
-  deleteItem = id => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'articleList/submit',
-      payload: {
-        id,
-      },
-    });
+  deleteItem = async id => {
+    const response = await del({ id });
+    if (response.success) {
+      message.success('删除成功！');
+      this.queryPage();
+    } else {
+      message.error('删除失败请重试！');
+    }
   };
+
+  changeType = type => {
+   if (type === this.state.type) {
+    this.setState({type: undefined, pageNum: 1});
+   } else {
+     this.setState({type, pageNum: 1});
+   }
+  }
 
   render() {
-    const {
-      articleList: { list },
-      loading,
-    } = this.props;
-    const {
-      form: { getFieldDecorator },
-    } = this.props;
-    const { visible, done, current = {} } = this.state;
-
-    const editAndDelete = (key, currentItem) => {
-      if (key === 'edit') this.showEditModal(currentItem);
-      else if (key === 'delete') {
-        Modal.confirm({
-          title: '删除任务',
-          content: '确定删除该任务吗？',
-          okText: '确认',
-          cancelText: '取消',
-          onOk: () => this.deleteItem(currentItem.id),
-        });
-      }
-    };
-
-    const modalFooter = done
-      ? {
-          footer: null,
-          onCancel: this.handleDone,
-        }
-      : {
-          okText: '保存',
-          onOk: this.handleSubmit,
-          onCancel: this.handleCancel,
-        };
-
-    const Info = ({ title, value, bordered }) => (
-      <div className={styles.headerInfo}>
-        <span>{title}</span>
-        <p>{value}</p>
-        {bordered && <em />}
-      </div>
-    );
+    const { pageNum, pageSize, type, total, list } = this.state;
 
     const extraContent = (
       <div className={styles.extraContent}>
-        <RadioGroup defaultValue="all">
-          <RadioButton value="all">全部</RadioButton>
-          <RadioButton value="progress">进行中</RadioButton>
-          <RadioButton value="waiting">等待中</RadioButton>
+        <a
+          style={{ fontSize: '16spx', color: 'rgb(0,0,0,0.65)', marginRight: '16px' }}
+          onClick={this.queryPage}
+        >
+          <Icon type="reload" />
+        </a>
+        <RadioGroup value={type}>
+          <RadioButton onClick={e => this.changeType(e.target.value)} value="html">Html富文本</RadioButton>
+          <RadioButton onClick={e => this.changeType(e.target.value)} value="markdown">Markdown文本</RadioButton>
         </RadioGroup>
-        <Search className={styles.extraContentSearch} placeholder="请输入" onSearch={() => ({})} />
+        <Search
+          className={styles.extraContentSearch}
+          placeholder="请输入标题"
+          onSearch={value => this.setState({ title: value, pageNum: 1 })}
+        />
       </div>
     );
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
-      pageSize: 5,
-      total: 50,
+      current: pageNum,
+      pageSize,
+      total,
+      onChange: (current, size) => this.setState({ pageNum: current, pageSize: size }),
+      onShowSizeChange: (current, size) => this.setState({ pageNum: current, pageSize: size }),
     };
 
-    const ListContent = ({ data: { owner, createdAt, percent, status } }) => (
+    const ListContent = ({ data: { type: articleType, createTime, updateTime } }) => (
       <div className={styles.listContent}>
         <div className={styles.listContentItem}>
-          <span>Owner</span>
-          <p>{owner}</p>
+          <span>类型</span>
+          {articleType === 'html' && <p>Html富文本&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>}
+          {articleType === 'markdown' && <p>Markdown文本</p>}
         </div>
         <div className={styles.listContentItem}>
-          <span>开始时间</span>
-          <p>{moment(createdAt).format('YYYY-MM-DD HH:mm')}</p>
+          <span>创建时间</span>
+          <p>{moment(createTime).format('YYYY-MM-DD HH:mm')}</p>
         </div>
         <div className={styles.listContentItem}>
-          <Progress
-            percent={percent}
-            status={status}
-            strokeWidth={6}
-            style={{
-              width: 180,
-            }}
-          />
+          <span>更新时间</span>
+          <p>{moment(updateTime).format('YYYY-MM-DD HH:mm')}</p>
         </div>
       </div>
     );
@@ -203,9 +146,27 @@ class ArticleList extends Component {
     const MoreBtn = ({ item }) => (
       <Dropdown
         overlay={
-          <Menu onClick={({ key }) => editAndDelete(key, item)}>
-            <Menu.Item key="edit">编辑</Menu.Item>
-            <Menu.Item key="delete">删除</Menu.Item>
+          <Menu>
+            <Menu.Item
+              key="edit"
+              onClick={() => {
+                router.push(`/article/edit/${item.id}`);
+              }}
+            >
+              编辑
+            </Menu.Item>
+            <Menu.Item
+              key="delete"
+              onClick={() => {
+                Modal.confirm({
+                  title: '删除文章',
+                  content: '确定删除该文章吗？',
+                  onOk: () => this.deleteItem(item.id),
+                });
+              }}
+            >
+              删除
+            </Menu.Item>
           </Menu>
         }
       >
@@ -215,115 +176,20 @@ class ArticleList extends Component {
       </Dropdown>
     );
 
-    const getModalContent = () => {
-      if (done) {
-        return (
-          <Result
-            status="success"
-            title="操作成功"
-            subTitle="一系列的信息描述，很短同样也可以带标点。"
-            extra={
-              <Button type="primary" onClick={this.handleDone}>
-                知道了
-              </Button>
-            }
-            className={styles.formResult}
-          />
-        );
-      }
-
-      return (
-        <Form onSubmit={this.handleSubmit}>
-          <FormItem label="任务名称" {...this.formLayout}>
-            {getFieldDecorator('title', {
-              rules: [
-                {
-                  required: true,
-                  message: '请输入任务名称',
-                },
-              ],
-              initialValue: current.title,
-            })(<Input placeholder="请输入" />)}
-          </FormItem>
-          <FormItem label="开始时间" {...this.formLayout}>
-            {getFieldDecorator('createdAt', {
-              rules: [
-                {
-                  required: true,
-                  message: '请选择开始时间',
-                },
-              ],
-              initialValue: current.createdAt ? moment(current.createdAt) : null,
-            })(
-              <DatePicker
-                showTime
-                placeholder="请选择"
-                format="YYYY-MM-DD HH:mm:ss"
-                style={{
-                  width: '100%',
-                }}
-              />,
-            )}
-          </FormItem>
-          <FormItem label="任务负责人" {...this.formLayout}>
-            {getFieldDecorator('owner', {
-              rules: [
-                {
-                  required: true,
-                  message: '请选择任务负责人',
-                },
-              ],
-              initialValue: current.owner,
-            })(
-              <Select placeholder="请选择">
-                <SelectOption value="付晓晓">付晓晓</SelectOption>
-                <SelectOption value="周毛毛">周毛毛</SelectOption>
-              </Select>,
-            )}
-          </FormItem>
-          <FormItem {...this.formLayout} label="产品描述">
-            {getFieldDecorator('subDescription', {
-              rules: [
-                {
-                  message: '请输入至少五个字符的产品描述！',
-                  min: 5,
-                },
-              ],
-              initialValue: current.subDescription,
-            })(<TextArea rows={4} placeholder="请输入至少五个字符" />)}
-          </FormItem>
-        </Form>
-      );
-    };
-
     return (
       <>
         <PageHeaderWrapper>
           <div className={styles.standardList}>
-            <Card bordered={false}>
-              <Row>
-                <Col sm={8} xs={24}>
-                  <Info title="我的待办" value="8个任务" bordered />
-                </Col>
-                <Col sm={8} xs={24}>
-                  <Info title="本周任务平均处理时间" value="32分钟" bordered />
-                </Col>
-                <Col sm={8} xs={24}>
-                  <Info title="本周完成任务数" value="24个任务" />
-                </Col>
-              </Row>
-            </Card>
-
             <Card
               className={styles.listCard}
               bordered={false}
-              title="基本列表"
               style={{
                 marginTop: 24,
               }}
               bodyStyle={{
                 padding: '0 32px 40px 32px',
               }}
+              title="文章列表"
               extra={extraContent}
             >
               <Button
@@ -333,39 +199,35 @@ class ArticleList extends Component {
                   marginBottom: 8,
                 }}
                 icon="plus"
-                onClick={this.showModal}
-                ref={component => {
-                  // eslint-disable-next-line  react/no-find-dom-node
-                  this.addBtn = findDOMNode(component);
-                }}
+                onClick={() => router.push('/article/edit/:id')}
               >
                 添加
               </Button>
               <List
                 size="large"
                 rowKey="id"
-                loading={loading}
+                loading={this.props.loading}
                 pagination={paginationProps}
                 dataSource={list}
                 renderItem={item => (
                   <List.Item
                     actions={[
                       <a
-                        key="edit"
                         onClick={e => {
                           e.preventDefault();
-                          this.showEditModal(item);
                         }}
                       >
-                        编辑
+                        阅读
                       </a>,
                       <MoreBtn key="more" item={item} />,
                     ]}
                   >
                     <List.Item.Meta
-                      avatar={<Avatar src={item.logo} shape="square" size="large" />}
-                      title={<a href={item.href}>{item.title}</a>}
-                      description={item.subDescription}
+                      avatar={
+                        <Avatar src={this.props.currentUser.avatar} shape="square" size="large" />
+                      }
+                      title={item.title}
+                      description={item.note}
                     />
                     <ListContent data={item} />
                   </List.Item>
@@ -374,32 +236,12 @@ class ArticleList extends Component {
             </Card>
           </div>
         </PageHeaderWrapper>
-
-        <Modal
-          title={done ? null : `任务${current ? '编辑' : '添加'}`}
-          className={styles.standardListForm}
-          width={640}
-          bodyStyle={
-            done
-              ? {
-                  padding: '72px 0',
-                }
-              : {
-                  padding: '28px 0 0',
-                }
-          }
-          destroyOnClose
-          visible={visible}
-          {...modalFooter}
-        >
-          {getModalContent()}
-        </Modal>
       </>
     );
   }
 }
 
-export default connect(({ articleList, loading }) => ({
-  articleList,
+export default connect(({ user, loading }) => ({
+  currentUser: user.currentUser,
   loading: loading.models.articleList,
-}))(Form.create()(ArticleList));
+}))(ArticleList);
