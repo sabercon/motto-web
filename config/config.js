@@ -133,7 +133,7 @@ export default {
                   name: '文章列表',
                   icon: 'bars',
                   path: '/article/list',
-                  component: './article/List',
+                  component: './article/ArticleList',
                 },
               ],
             },

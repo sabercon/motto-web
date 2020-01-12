@@ -79,7 +79,7 @@ class Edit extends Component {
     if (file.status !== 'done') return;
     if (file.response.success) {
       const { setFieldsValue, getFieldValue } = this.props.form;
-      const oldContent = getFieldValue('html');
+      const oldContent = getFieldValue('html') || BraftEditor.createEditorState(null);
       const newContent = ContentUtils.insertMedias(oldContent, [
         {
           type: 'IMAGE',
