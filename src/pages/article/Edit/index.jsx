@@ -2,16 +2,17 @@ import 'braft-editor/dist/index.css';
 import React, { Component } from 'react';
 import BraftEditor from 'braft-editor';
 import { ContentUtils } from 'braft-utils';
-import { Form, Input, Button, Card, Radio, message, Upload, Icon } from 'antd';
-// import MonacoEditor from 'react-monaco-editor';
+import { Form, Input, Button, Card, Radio, message, Upload, Icon, Modal } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { save, get } from '@/services/article';
+// import MonacoEditor from 'react-monaco-editor';
 
 const FormItem = Form.Item;
 
 class Edit extends Component {
   state = {
     id: undefined,
+    type: 'html',
   };
 
   componentDidMount() {
@@ -25,17 +26,14 @@ class Edit extends Component {
       get({ id }).then(response => {
         if (response.success && response.data) {
           const { title, note, type, text, rawJson } = response.data;
-          this.setState({ id });
-          // 先设置类型防止markdown属性因为还没有而不能初始化
-          form.setFieldsValue({ type }, () => {
-            const html = type === 'html' ? BraftEditor.createEditorState(rawJson) : undefined;
-            const markdown = type === 'markdown' ? text : undefined;
-            form.setFieldsValue({
-              title,
-              note,
-              html,
-              markdown,
-            });
+          this.setState({ id, type });
+          const html = type === 'html' ? BraftEditor.createEditorState(rawJson) : undefined;
+          const markdown = type === 'markdown' ? text : undefined;
+          form.setFieldsValue({
+            title,
+            note,
+            html,
+            markdown,
           });
         }
       });
@@ -51,8 +49,8 @@ class Edit extends Component {
       },
       (err, values) => {
         if (!err) {
-          const { title, note, type, html, markdown } = values;
-          const { id } = this.state;
+          const { title, note, html, markdown } = values;
+          const { id, type } = this.state;
           let text;
           let rawJson;
           if (type === 'html' && html) {
@@ -66,6 +64,15 @@ class Edit extends Component {
           save(submitData).then(response => {
             if (response.success) {
               message.success('操作成功！');
+              if (!id) {
+                // 增加文章的情况下删除输入内容
+                this.props.form.setFieldsValue({
+                  title: null,
+                  note: null,
+                  html: type === 'html' ? BraftEditor.createEditorState(null) : undefined,
+                  markdown: undefined,
+                })
+              }
             } else {
               message.error('操作失败请重试！');
             }
@@ -73,6 +80,16 @@ class Edit extends Component {
         }
       },
     );
+  };
+
+  changeType = type => {
+    Modal.confirm({
+      title: '改变类型',
+      content: '改变文章类型不会保存之前的内容，确定继续吗',
+      okText: '确定',
+      cancelText: '取消',
+      onOk: () => this.setState({ type }),
+    });
   };
 
   uploadImage = ({ file }) => {
@@ -171,9 +188,9 @@ class Edit extends Component {
   }
 
   render() {
+    const { id, type } = this.state;
     const { form } = this.props;
-    const { getFieldDecorator, getFieldValue } = form;
-    const type = getFieldValue('type');
+    const { getFieldDecorator } = form;
     const formItemLayout = {
       labelCol: {
         xs: {
@@ -209,7 +226,14 @@ class Edit extends Component {
 
     return (
       <PageHeaderWrapper>
-        <Card bordered={false}>
+        <Card
+          bordered={false}
+          title={
+            <h1 style={{ textAlign: 'center', marginBottom: '0' }}>
+              {id ? '修改文章' : '增加文章'}
+            </h1>
+          }
+        >
           <Form
             hideRequiredMark
             {...formItemLayout}
@@ -232,12 +256,10 @@ class Edit extends Component {
               {getFieldDecorator('note')(<Input size="large" placeholder="可输入备注" />)}
             </FormItem>
             <FormItem label="文章类型">
-              {getFieldDecorator('type', { initialValue: 'html' })(
-                <Radio.Group>
-                  <Radio.Button value="html">Html富文本</Radio.Button>
-                  <Radio.Button value="markdown">Markdown文本</Radio.Button>
-                </Radio.Group>,
-              )}
+              <Radio.Group onChange={e => this.changeType(e.target.value)} value={type} disabled={!!id}>
+                <Radio.Button value="html">Html富文本</Radio.Button>
+                <Radio.Button value="markdown">Markdown文本</Radio.Button>
+              </Radio.Group>
             </FormItem>
             {type === 'html' ? (
               <FormItem
@@ -345,9 +367,7 @@ class Edit extends Component {
                       message: '请输入内容',
                     },
                   ],
-                })(
-                  <Input.TextArea allowClear rows="25" wrap="hard" />,
-                )}
+                })(<Input.TextArea allowClear rows="25" wrap="hard" />)}
               </FormItem>
             )}
             {/* <MonacoEditor width="800" height="600" language="markdown" theme="vs-dark" /> */}

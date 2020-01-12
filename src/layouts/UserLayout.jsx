@@ -46,7 +46,7 @@ const UserLayout = props => {
                 <span className={styles.title}>Motto Log</span>
               </Link>
             </div>
-            <div className={styles.desc}>Motto Log 是一个可以记录和分享个人生活的网站</div>
+            <div className={styles.desc}>Motto Log 是一个关于记录和分享的网站</div>
           </div>
           {children}
         </div>
