@@ -39,25 +39,13 @@ const defaultFooterDom = (
   <DefaultFooter
     copyright="2020 SaberCon 个人网站出品"
     links={[
-      {
-        key: 'motto-web',
-        title: 'motto-web',
-        href: 'https://github.com/SaberCon/motto-web',
-        blankTarget: true,
-      },
-      {
-        key: 'SaberCon',
-        title: <Icon type="github" />,
-        href: 'https://github.com/SaberCon',
-        blankTarget: true,
-      },
-      {
-        key: 'motto',
-        title: 'motto',
-        href: 'https://github.com/SaberCon/motto',
-        blankTarget: true,
-      },
-    ]}
+        {
+          key: '粤ICP备19154618号',
+          title: '粤ICP备19154618号',
+          href: 'http://www.beian.miit.gov.cn',
+          blankTarget: true,
+        }
+  ]}
   />
 );
 

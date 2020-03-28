@@ -3,7 +3,6 @@ import { Helmet } from 'react-helmet';
 import Link from 'umi/link';
 import React from 'react';
 import { connect } from 'dva';
-import { Icon } from 'antd';
 import SelectLang from '@/components/SelectLang';
 import logo from '../assets/logo.svg';
 import styles from './UserLayout.less';
@@ -39,7 +38,7 @@ const UserLayout = props => {
           <SelectLang />
         </div>
         <div className={styles.content}>
-          <div className={styles.top}>
+          {/* <div className={styles.top}>
             <div className={styles.header}>
               <Link to="/">
                 <img alt="logo" className={styles.logo} src={logo} />
@@ -47,30 +46,18 @@ const UserLayout = props => {
               </Link>
             </div>
             <div className={styles.desc}>Motto Log 是一个关于记录和分享的网站</div>
-          </div>
+          </div> */}
           {children}
         </div>
         <DefaultFooter
           copyright="2020 SaberCon 个人网站出品"
-          links={[
-            {
-              key: 'motto-web',
-              title: 'motto-web',
-              href: 'https://github.com/SaberCon/motto-web',
-              blankTarget: true,
-            },
-            {
-              key: 'SaberCon',
-              title: <Icon type="github" />,
-              href: 'https://github.com/SaberCon',
-              blankTarget: true,
-            },
-            {
-              key: 'motto',
-              title: 'motto',
-              href: 'https://github.com/SaberCon/motto',
-              blankTarget: true,
-            },
+            links={[
+                {
+                  key: '粤ICP备19154618号',
+                  title: '粤ICP备19154618号',
+                  href: 'http://www.beian.miit.gov.cn',
+                  blankTarget: true,
+                }
           ]}
         />
       </div>
